@@ -1,0 +1,105 @@
+- alias: Coffee weekday warmup
+  hide_entity: False
+  trigger:
+    platform: time
+    after: '06:45:00'
+  condition:
+    condition: and
+    conditions:
+      - condition: zone
+        entity_id: device_tracker.android7e8a96ae637f673
+        zone: zone.home
+      - condition: time
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+  action:
+    service: homeassistant.turn_on
+    entity_id:
+      - switch.Silvia
+
+- alias: Notify of Rain
+  hide_entity: False
+  trigger:
+    platform: time
+    after: '06:55:00'
+  condition:
+    condition: and
+    conditions:
+      - condition: time
+        weekday:        
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      - condition: state
+        entity_id: sensor.precip_probability
+        state: '1'
+  action:
+    service: notify.pushbullet
+    data:
+      message: 'Rain is expected today'
+
+
+- alias: Left Lights On
+  hide_entity: False
+  trigger:
+    platform: state
+    entity_id: group.Family
+    state: 'not_home'
+  action:
+    - service: homeassistant.turn_off
+      entity_id: 
+        - group.Lounge_Room
+        - light.Study
+        - switch.Silvia
+        - light.Bedroom
+        - light.Entry
+        - light.Hallway
+        - light.Stairs
+
+- alias: Left Music On
+  hide_entity: False
+  trigger:
+    platform: state
+    entity_id: group.Family
+    state: 'not_home'
+  condition:
+    condition: state
+    entity_id: media_player.tunes
+    state: 'playing'
+  action:
+    - service: media_player.media_pause
+      entity_id: media_player.tunes
+
+- alias: Arrival
+  hide_entity: True
+  trigger:
+    platform: state
+    entity_id: group.Family
+    state: 'home'
+    for: 
+      seconds: 1
+  condition: 
+    condition: sun
+    after: sunset
+    before: sunrise
+  action:
+    service: homeassistant.turn_on
+    entity_id: light.Entry
+
+- alias: "Media player playing"
+  hide_entity: False
+  trigger:
+    - platform: state
+      entity_id: sensor.Plex
+      from: '0'
+      to: '1'
+  action:
+    service: scene.turn_on
+    entity_id: scene.livingroom_dim
+      

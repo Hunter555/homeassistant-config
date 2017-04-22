@@ -1,0 +1,22 @@
+Weather:
+  - dark_sky.summary
+  - dark_sky.precip_probability
+  - bom.apparent_t
+  - bom.air_temp
+
+Lounge Room:
+  - light.Lounge
+  - light.Dining_Table
+  - media_player.TV
+
+Study:
+  - light.Study
+  - media_player.Tunes
+
+Family:
+    - device_tracker.android7e8a96ae637f673
+    - device_tracker.androide365e46700324e23
+
+Coffee Machine:
+  - sensor.Silvia_Power
+  - switch.Silvia

@@ -1,0 +1,13 @@
+- name: Livingroom normal
+  entities:
+    light.Lounge:
+      state: on
+      transition: 2
+      brightness: 150
+
+- name: Livingroom dim
+  entities:
+    light.Lounge:
+      state: on
+      transition: 2
+      brightness: 40

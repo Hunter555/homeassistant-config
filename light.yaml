@@ -1,0 +1,40 @@
+
+  - platform: limitlessled
+    bridges:
+    - host: 10.0.0.159
+      version: 5
+      port: 8899
+      groups:
+      - number: 1
+        type: white
+        name: Entry
+      - number: 2
+        type: white
+        name: Hallway
+      - number: 3
+        type: white
+        name: Study
+      - number: 4
+        type: white
+        name: Stairs
+    - host: 10.0.0.160
+      version: 5
+      port: 8899
+      groups:
+      - number: 1
+        type: white
+        name: Bedroom
+      - number: 1
+        type: rgbw
+        name: Dining Table
+      - number: 2
+        type: rgbw
+        name: Lounge
+
+  - platform: mqtt_template
+    name: "Spheramid Underlight"
+    command_topic: "$hardware/status/reset"
+    brightness_template: '' # required so light has brightness option
+    command_off_template: '{"brightness": 0}'
+    command_on_template: >
+      {"brightness": {%- if brightness is defined -%} {{ (brightness / 255 * 100) | int }} {% else %} 100 {%- endif -%} }

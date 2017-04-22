@@ -1,0 +1,114 @@
+homeassistant:
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret latitude
+  longitude: !secret longitude
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 200
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Australia/Sydney
+
+# Enables the frontend
+frontend:
+# Enables configuration UI
+config:
+
+camera:
+  - platform: generic
+    still_image_url: http://10.0.0.10/image/jpeg.cgi
+    username: !secret camera_username
+    password: !secret camera_password
+    name: Entry Cam
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret http_password
+  trusted_networks:
+    - 10.0.0.0/24
+  # Uncomment this if you are using SSL or running in Docker etc
+  base_url: !secret base_url 
+
+device_tracker:
+  - platform: owntracks
+  - platform: netgear
+    host: 10.0.0.1
+    username: !secret router_username
+    password: !secret router_password
+    consider_home: 300
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+sensor: !include sensor.yaml
+scene: !include scene.yaml
+automation: !include automation.yaml
+
+logger:
+  default: error
+  
+# Text to speech
+tts:
+  platform: google
+
+mqtt:
+  broker: localhost
+  port: 1883
+  client_id: home-assistant-1
+  keepalive: 60
+  protocol: 3.1
+
+switch:
+  - platform: mqtt
+    command_topic: "$device/80d5a43df8/channel/1-6-in"
+    name: Silvia
+    payload_on: '{"Method":"turnOn","params":null,"JsonRpc":"2.0"}'
+    payload_off: '{"Method":"turnOff","params":null,"JsonRpc":"2.0"}'
+    qos: 0
+  - platform: flux
+    lights:
+    - light.study
+    - light.dining_table
+    - light.lounge
+    - light.Bedroom
+    - light.Entry
+    - light.Hallway
+    - light.Stairs
+    stop_time: '23:55'
+    disable_brightness_adjust: True
+
+media_player:
+  - platform: gpmdp
+    name: Tunes
+    host: 10.0.0.2
+  #- platform: cast
+  #  name: Netflix
+  #  host: 10.0.0.55
+  - platform: samsungtv
+    host: 10.0.0.55
+    port: 8001
+    name: TV
+    mac: BC:8C:CD:C1:28:3F
+
+notify:
+  - name: Pushbullet
+    platform: pushbullet
+    api_key: !secret pushbullet_key
+
+light: !include light.yaml
+group: !include groups.yaml
