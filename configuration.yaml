@@ -27,7 +27,9 @@ http:
   trusted_networks:
     - 10.0.0.0/24
   # Uncomment this if you are using SSL or running in Docker etc
-  base_url: !secret base_url 
+  base_url: !secret base_url
+  ssl_certificate: !secret ssl_certificate
+  ssl_key: !secret ssl_key
 
 device_tracker:
   - platform: owntracks
@@ -35,7 +37,7 @@ device_tracker:
     host: 10.0.0.1
     username: !secret router_username
     password: !secret router_password
-    consider_home: 300
+    consider_home: 60
 
 # Checks for available updates
 updater:
@@ -55,6 +57,7 @@ logbook:
 # Track the sun
 sun:
 
+#customize: !include customize.yaml
 sensor: !include sensor.yaml
 scene: !include scene.yaml
 automation: !include automation.yaml
@@ -81,6 +84,7 @@ switch:
     payload_off: '{"Method":"turnOff","params":null,"JsonRpc":"2.0"}'
     qos: 0
   - platform: flux
+    name: flux
     lights:
     - light.study
     - light.dining_table
@@ -112,3 +116,25 @@ notify:
 
 light: !include light.yaml
 group: !include groups.yaml
+
+zone:
+  name: Home
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 200
+  icon: mdi:home
+
+zone 2:
+  name: Work
+  radius: 200
+  latitude: !secret work_latitude
+  longitude: !secret work_longitude
+  icon: mdi:laptop
+
+zone 3:
+  name: Gym
+  radius: 100
+  latitude: !secret gym_latitude
+  longitude: !secret gym_longitude
+  icon: mdi:weight-kilogram
+

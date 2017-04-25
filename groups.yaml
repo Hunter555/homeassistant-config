@@ -1,21 +1,23 @@
 Weather:
-  - dark_sky.summary
-  - dark_sky.precip_probability
-  - bom.apparent_t
-  - bom.air_temp
+  - sensor.weather_precip_probability
+  - sensor.weather_summary
+  - sensor.bom_feels_like_c
+  - sensor.bom_air_temp_c
 
 Lounge Room:
   - light.Lounge
   - light.Dining_Table
   - media_player.TV
+  - sensor.sonarr_upcoming
+  - sensor.plex
 
 Study:
   - light.Study
   - media_player.Tunes
 
 Family:
-    - device_tracker.android7e8a96ae637f673
-    - device_tracker.androide365e46700324e23
+    - device_tracker.hunter_hunterspixel
+    - device_tracker.nikki_z3
 
 Coffee Machine:
   - sensor.Silvia_Power

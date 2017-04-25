@@ -7,7 +7,7 @@
     condition: and
     conditions:
       - condition: zone
-        entity_id: device_tracker.android7e8a96ae637f673
+        entity_id: device_tracker.hunter_hunterspixel
         zone: zone.home
       - condition: time
         weekday:
@@ -79,11 +79,10 @@
 - alias: Arrival
   hide_entity: True
   trigger:
-    platform: state
-    entity_id: group.Family
-    state: 'home'
-    for: 
-      seconds: 1
+    platform: zone
+    entity_id: device_tracker.hunter_hunterspixel
+    zone: zone.home
+    event: enter # or leave
   condition: 
     condition: sun
     after: sunset
@@ -99,6 +98,10 @@
       entity_id: sensor.Plex
       from: '0'
       to: '1'
+  condition:
+    condition: state
+    entity_id: media_player.tv
+    state: 'on'
   action:
     service: scene.turn_on
     entity_id: scene.livingroom_dim
