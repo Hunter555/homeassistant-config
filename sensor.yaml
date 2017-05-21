@@ -14,6 +14,13 @@
   - platform: mqtt
     state_topic: "$device/80d5a43df8/channel/1-1794/event/state"
     name: Silvia Power
+    unit_of_measurement: 'watts'
+    value_template: '{{ value_json.params[0] }}'
+    expire_after: 60
+  - platform: mqtt
+    state_topic: "$device/80d5a43df8/channel/1-1794/#"
+    name: Silvia Power2
+    unit_of_measurement: 'watts'
     value_template: '{{ value_json.params[0] }}'
     expire_after: 60
   - platform: bom
@@ -28,3 +35,6 @@
     monitored_conditions:
       - summary
       - precip_probability
+  - platform: cert_expiry
+    host: !secret url
+    port: 8123

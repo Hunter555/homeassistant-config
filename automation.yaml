@@ -36,14 +36,25 @@
         - wed
         - thu
         - fri
-      - condition: state
-        entity_id: sensor.precip_probability
-        state: '1'
+      - condition: numeric_state
+        entity_id: sensor.weather_precip_probability
+        above: 30
   action:
     service: notify.pushbullet
     data:
       message: 'Rain is expected today'
 
+- alias: Certificate Expiry
+  hide_entity: True
+  trigger:
+    platform: state
+    entity_id: sensor.ssl_certificate_expiry
+    from: '8'
+    to: '7'
+  action:
+    service: notify.pushbullet
+    data:
+      message: 'HomeAssistant certificate expiring in 7 days'
 
 - alias: Left Lights On
   hide_entity: False
@@ -76,20 +87,39 @@
     - service: media_player.media_pause
       entity_id: media_player.tunes
 
+- alias: Arrival Notify
+  hide_entity: True
+  trigger:
+    platform: state
+    entity_id: device_tracker.nikki_nikkisz3
+    from: 'not_home'
+    to: 'home'
+  condition:
+    condition: state
+    entity_id: device_tracker.hunter_hunterspixel
+    state: 'home'
+  action:
+    service: notify.pushbullet
+    data:
+      message: 'Nikki is home'
+
 - alias: Arrival
   hide_entity: True
   trigger:
-    platform: zone
-    entity_id: device_tracker.hunter_hunterspixel
-    zone: zone.home
-    event: enter # or leave
+    platform: state
+    entity_id: group.family
+    from: 'not_home'
+    to: 'home'
   condition: 
-    condition: sun
-    after: sunset
-    before: sunrise
+    condition: or
+    conditions:
+      - condition: sun
+        after: sunset
+      - condition: sun
+        before: sunrise
   action:
     service: homeassistant.turn_on
-    entity_id: light.Entry
+    entity_id: light.entry
 
 - alias: "Media player playing"
   hide_entity: False

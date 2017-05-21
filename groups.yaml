@@ -1,3 +1,42 @@
+default_view:
+    view: yes
+    name: Home
+    icon: mdi:home
+    entities:
+      - updater.updater
+      - group.Weather
+      - group.Family
+      - group.Study
+      - group.Lounge_Room
+      - group.all_automations
+      - group.Coffee_Machine
+      - camera.entry_cam
+
+Lights_view:
+    view: yes
+    name: Lights
+    icon: mdi:lightbulb
+    entities:
+      - group.lights
+      - group.Scenes
+      - light.spheramid_underlight
+      - switch.flux
+
+Lights:
+  entities:
+    - light.study
+    - light.dining_table
+    - light.entry
+    - light.stairs
+    - light.hallway
+#    - light.spheramid_underlight
+    - light.lounge
+    - light.bedroom  
+
+Scenes:
+  - scene.livingroom_dim
+  - scene.livingroom_normal
+
 Weather:
   - sensor.weather_precip_probability
   - sensor.weather_summary
@@ -17,8 +56,22 @@ Study:
 
 Family:
     - device_tracker.hunter_hunterspixel
-    - device_tracker.nikki_z3
+    - device_tracker.nikki_nikkisz3
 
 Coffee Machine:
   - sensor.Silvia_Power
   - switch.Silvia
+
+Transport:
+  view: yes
+  icon: mdi:car
+  entities:
+    - group.transport_cameras
+
+Transport Cameras:
+  entities:
+    - camera.chatswood
+    - camera.m1_wahroonga
+    - camera.m1_windybanks
+    - camera.thornleigh
+

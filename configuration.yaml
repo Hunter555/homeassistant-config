@@ -6,8 +6,9 @@ homeassistant:
   # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: 200
   unit_system: metric
-  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Australia/Sydney
+  customize: !include customize.yaml
+
 
 # Enables the frontend
 frontend:
@@ -20,6 +21,18 @@ camera:
     username: !secret camera_username
     password: !secret camera_password
     name: Entry Cam
+  - platform: generic
+    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/f3_windybanks.jpg
+    name: M1 Windybanks
+  - platform: generic
+    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/f3_wahroonga.jpg
+    name: M1 Wahroonga
+  - platform: generic
+    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/pacific_chats.jpg
+    name: Chatswood
+  - platform: generic
+    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/pennanthillsrd_thornleigh.jpg
+    name: Thornleigh
 
 http:
   # Uncomment this to add a password (recommended!)
@@ -50,14 +63,39 @@ conversation:
 
 # Enables support for tracking state changes over time.
 history:
+  exclude:
+    domains:
+      - automation
+      - weblink
+      - updater
+    entities:
+      - sensor.last_boot
+      - sensor.date
+
+recorder:
+  purge_days: 5
+  exclude:
+    domains:
+      - automation
+      - weblink
+      - updater
+    entities:
+      - sun.sun
+      - sensor.date
 
 # View all events in a logbook
 logbook:
+  exclude:
+    entities:
+      - sensor.last_boot
+      - sensor.date
+    domains:
+      - sun
+      - weblink
 
 # Track the sun
 sun:
 
-#customize: !include customize.yaml
 sensor: !include sensor.yaml
 scene: !include scene.yaml
 automation: !include automation.yaml
@@ -93,7 +131,9 @@ switch:
     - light.Entry
     - light.Hallway
     - light.Stairs
-    stop_time: '23:55'
+    stop_time: '08:00'
+    start_time: '06:00'
+    mode: mired
     disable_brightness_adjust: True
 
 media_player:
