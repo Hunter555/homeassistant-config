@@ -73,7 +73,6 @@ history:
       - sensor.date
 
 recorder:
-  purge_days: 5
   exclude:
     domains:
       - automation
@@ -115,12 +114,20 @@ mqtt:
   protocol: 3.1
 
 switch:
-  - platform: mqtt
-    command_topic: "$device/80d5a43df8/channel/1-6-in"
+#  - platform: mqtt
+#    command_topic: "$device/80d5a43df8/channel/1-6-in"
+#    name: Silvia
+#    payload_on: '{"Method":"turnOn","params":null,"JsonRpc":"2.0"}'
+#    payload_off: '{"Method":"turnOff","params":null,"JsonRpc":"2.0"}'
+#    qos: 0
+  - platform: xiaomi_miio
     name: Silvia
-    payload_on: '{"Method":"turnOn","params":null,"JsonRpc":"2.0"}'
-    payload_off: '{"Method":"turnOff","params":null,"JsonRpc":"2.0"}'
-    qos: 0
+    host: 10.0.0.12
+    token: !secret silvia_token
+  - platform: xiaomi_miio
+    name: Bathroom Fan
+    host: 10.0.0.15
+    token: !secret bathroom_fan_token
   - platform: flux
     name: flux
     lights:
@@ -130,17 +137,22 @@ switch:
     - light.Bedroom
     - light.Entry
     - light.Hallway
-    - light.Stairs
+    #- light.Stairs
     stop_time: '08:00'
     start_time: '06:00'
     mode: mired
     disable_brightness_adjust: True
+  - platform: wake_on_lan
+    name: My PC
+    mac_address: "ac:22:0b:26:15:08"
+    host: 10.0.0.2
+
 
 media_player:
   - platform: gpmdp
     name: Tunes
     host: 10.0.0.2
-  #- platform: cast
+  - platform: cast
   #  name: Netflix
   #  host: 10.0.0.55
   - platform: samsungtv
@@ -157,6 +169,14 @@ notify:
 light: !include light.yaml
 group: !include groups.yaml
 
+emulated_hue:
+#  type: alexa
+  host_ip: 10.0.0.5
+  listen_port: 80
+  advertise_ip: 10.0.0.5
+  advertise_port: 80
+  expose_by_default: false
+
 zone:
   name: Home
   latitude: !secret latitude
@@ -172,9 +192,15 @@ zone 2:
   icon: mdi:laptop
 
 zone 3:
-  name: Gym
-  radius: 100
-  latitude: !secret gym_latitude
-  longitude: !secret gym_longitude
-  icon: mdi:weight-kilogram
+  name: Main Work
+  radius: 200
+  latitude: !secret nwork_latitude
+  longitude: !secret nwork_longitude
+  icon: mdi:medical-bag
 
+zone 4:
+  name: Work
+  radius: 200
+  latitude: !secret nwork2_latitude
+  longitude: !secret nwork2_longitude
+  icon: mdi:medical-bag

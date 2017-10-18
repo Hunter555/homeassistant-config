@@ -52,6 +52,7 @@ Lounge Room:
 
 Study:
   - light.Study
+  - switch.my_pc
   - media_player.Tunes
 
 Family:

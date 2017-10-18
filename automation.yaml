@@ -2,7 +2,7 @@
   hide_entity: False
   trigger:
     platform: time
-    after: '06:45:00'
+    at: '06:45:00'
   condition:
     condition: and
     conditions:
@@ -25,7 +25,7 @@
   hide_entity: False
   trigger:
     platform: time
-    after: '06:55:00'
+    at: '06:55:00'
   condition:
     condition: and
     conditions:
@@ -61,7 +61,8 @@
   trigger:
     platform: state
     entity_id: group.Family
-    state: 'not_home'
+    from: 'home'
+    to: 'not_home'
   action:
     - service: homeassistant.turn_off
       entity_id: 
@@ -78,7 +79,8 @@
   trigger:
     platform: state
     entity_id: group.Family
-    state: 'not_home'
+    from: 'home'
+    to: 'not_home'
   condition:
     condition: state
     entity_id: media_player.tunes
