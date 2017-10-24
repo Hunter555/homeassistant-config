@@ -72,15 +72,15 @@ history:
       - sensor.last_boot
       - sensor.date
 
-recorder:
-  exclude:
-    domains:
-      - automation
-      - weblink
-      - updater
-    entities:
-      - sun.sun
-      - sensor.date
+#recorder:
+#  exclude:
+#    domains:
+#      - automation
+#      - weblink
+#      - updater
+#    entities:
+#      - sun.sun
+#      - sensor.date
 
 # View all events in a logbook
 logbook:

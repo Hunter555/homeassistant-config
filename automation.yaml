@@ -1,4 +1,5 @@
-- alias: Coffee weekday warmup
+- id: 31c41e08480f4761ba1d84bc379b5df9
+  alias: Coffee weekday warmup
   hide_entity: False
   trigger:
     platform: time
@@ -21,7 +22,8 @@
     entity_id:
       - switch.Silvia
 
-- alias: Notify of Rain
+- id: aa91ac10b76049d7b8c36c20a3ad03c3
+  alias: Notify of Rain
   hide_entity: False
   trigger:
     platform: time
@@ -44,7 +46,8 @@
     data:
       message: 'Rain is expected today'
 
-- alias: Certificate Expiry
+- id: 74fc02fd98a345c7bcd41cddf1d320cd
+  alias: Certificate Expiry
   hide_entity: True
   trigger:
     platform: state
@@ -56,7 +59,8 @@
     data:
       message: 'HomeAssistant certificate expiring in 7 days'
 
-- alias: Left Lights On
+- id: 61ef041cedc14cc29a3087d02c67bc17
+  alias: Left Lights On
   hide_entity: False
   trigger:
     platform: state
@@ -74,7 +78,8 @@
         - light.Hallway
         - light.Stairs
 
-- alias: Left Music On
+- id: fecafe1ec73542aab9b1ef636facefc5
+  alias: Left Music On
   hide_entity: False
   trigger:
     platform: state
@@ -89,7 +94,8 @@
     - service: media_player.media_pause
       entity_id: media_player.tunes
 
-- alias: Arrival Notify
+- id: 06f124acc60a49fc9c85b33e579d5f94
+  alias: Arrival Notify
   hide_entity: True
   trigger:
     platform: state
@@ -105,7 +111,8 @@
     data:
       message: 'Nikki is home'
 
-- alias: Arrival
+- id: 412246de78934e02aa2d405cbe00a214
+  alias: Arrival
   hide_entity: True
   trigger:
     platform: state
@@ -123,7 +130,8 @@
     service: homeassistant.turn_on
     entity_id: light.entry
 
-- alias: "Media player playing"
+- id: d823f6cba3b54bf1848db1a2e9820d00
+  alias: "Media player playing"
   hide_entity: False
   trigger:
     - platform: state
