@@ -15,6 +15,31 @@ frontend:
 # Enables configuration UI
 config:
 
+google_assistant:
+  project_id: level-mark-166706
+  client_id: !secret google_client_id
+  access_token: !secret google_access_token
+  agent_user_id: hunter
+  api_key: !secret google_api_key
+  exposed_domains:
+    - light
+  entity_config:
+    switch.Silvia:
+      type: switch
+      expose: true
+    #media_player.Tunes:
+    #  type: media_player
+    #  expose: true
+    switch.My_pc:
+      type: switch
+      expose: true
+    switch.Gym_Speakers:
+      type: switch
+      expose: true
+    cover.garage_door:
+      type: switch
+      expose: true
+
 camera:
   - platform: generic
     still_image_url: http://10.0.0.10/image/jpeg.cgi
@@ -46,11 +71,14 @@ http:
 
 device_tracker:
   - platform: owntracks
+    max_gps_accuracy: 200
   - platform: netgear
     host: 10.0.0.1
     username: !secret router_username
     password: !secret router_password
-    consider_home: 60
+    consider_home: 340
+    interval_seconds: 12
+    track_new_devices: yes
 
 # Checks for available updates
 updater:
@@ -88,6 +116,8 @@ logbook:
     entities:
       - sensor.last_boot
       - sensor.date
+      - sensor.garage_door_time_in_state
+      - sensor.garage_door_wifi_signal_strength
     domains:
       - sun
       - weblink
@@ -97,11 +127,12 @@ sun:
 
 sensor: !include sensor.yaml
 scene: !include scene.yaml
-automation: !include automation.yaml
+automation: !include automations.yaml
 
 logger:
   default: error
-  
+
+
 # Text to speech
 tts:
   platform: google
@@ -122,11 +153,11 @@ switch:
 #    qos: 0
   - platform: xiaomi_miio
     name: Silvia
-    host: 10.0.0.12
+    host: 10.0.0.7
     token: !secret silvia_token
   - platform: xiaomi_miio
-    name: Bathroom Fan
-    host: 10.0.0.15
+    name: Gym Speakers
+    host: 10.0.0.8
     token: !secret bathroom_fan_token
   - platform: flux
     name: flux
@@ -138,14 +169,19 @@ switch:
     - light.Entry
     - light.Hallway
     #- light.Stairs
-    stop_time: '08:00'
-    start_time: '06:00'
     mode: mired
     disable_brightness_adjust: True
   - platform: wake_on_lan
     name: My PC
     mac_address: "ac:22:0b:26:15:08"
     host: 10.0.0.2
+    turn_off:
+      service: switch.turn_off
+      entity_id: switch.pc
+  - platform: command_line
+    switches:
+      pc:
+        command_off: !secret pc_shutdown_command
 
 
 media_player:
@@ -153,12 +189,15 @@ media_player:
     name: Tunes
     host: 10.0.0.2
   - platform: cast
-  #  name: Netflix
-  #  host: 10.0.0.55
+    name: TV
+    host: 10.0.0.18
+  - platform: cast
+    name: Gym Speaker
+    host: 10.0.0.20
   - platform: samsungtv
     host: 10.0.0.55
     port: 8001
-    name: TV
+    name: Samsung TV
     mac: BC:8C:CD:C1:28:3F
 
 notify:
@@ -169,13 +208,13 @@ notify:
 light: !include light.yaml
 group: !include groups.yaml
 
-emulated_hue:
-#  type: alexa
-  host_ip: 10.0.0.5
-  listen_port: 80
-  advertise_ip: 10.0.0.5
-  advertise_port: 80
-  expose_by_default: false
+cover:
+  - platform: garadget
+    covers:
+      480056000551353530353431:
+        username: !secret garadget_user
+        password: !secret garadget_password
+        name: Garage door
 
 zone:
   name: Home

@@ -11,3 +11,8 @@
       state: on
       #transition: 2
       brightness: 40
+
+- name: Alarm
+  entities:
+    switch.silvia:
+      state: on

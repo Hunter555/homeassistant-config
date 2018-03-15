@@ -31,10 +31,10 @@
         type: rgbw
         name: Lounge
 
-  - platform: mqtt_template
-    name: "Spheramid Underlight"
-    command_topic: "$hardware/status/reset"
-    brightness_template: '' # required so light has brightness option
-    command_off_template: '{"brightness": 0}'
-    command_on_template: >
-      {"brightness": {%- if brightness is defined -%} {{ (brightness / 255 * 100) | int }} {% else %} 100 {%- endif -%} }
+  #- platform: mqtt_template
+   # name: "Spheramid Underlight"
+   # command_topic: "$hardware/status/reset"
+   # brightness_template: '' # required so light has brightness option
+   # command_off_template: '{"brightness": 0}'
+   # command_on_template: >
+   #   {"brightness": {%- if brightness is defined -%} {{ (brightness / 255 * 100) | int }} {% else %} 100 {%- endif -%} }

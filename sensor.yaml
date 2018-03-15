@@ -11,18 +11,18 @@
     host: 10.0.0.2
     username: !secret plex_username
     password: !secret plex_password
-  - platform: mqtt
-    state_topic: "$device/80d5a43df8/channel/1-1794/event/state"
-    name: Silvia Power
-    unit_of_measurement: 'watts'
-    value_template: '{{ value_json.params[0] }}'
-    expire_after: 60
-  - platform: mqtt
-    state_topic: "$device/80d5a43df8/channel/1-1794/#"
-    name: Silvia Power2
-    unit_of_measurement: 'watts'
-    value_template: '{{ value_json.params[0] }}'
-    expire_after: 60
+  #- platform: mqtt
+  #  state_topic: "$device/80d5a43df8/channel/1-1794/event/state"
+  #  name: Silvia Power
+  #  unit_of_measurement: 'watts'
+  #  value_template: '{{ value_json.params[0] }}'
+  #  expire_after: 60
+  #- platform: mqtt
+  #  state_topic: "$device/80d5a43df8/channel/1-1794/#"
+  #  name: Silvia Power2
+  #  unit_of_measurement: 'watts'
+  #  value_template: '{{ value_json.params[0] }}'
+  #  expire_after: 60
   - platform: bom
     station: IDN60901.94759
     monitored_conditions:
@@ -37,4 +37,28 @@
       - precip_probability
   - platform: cert_expiry
     host: !secret url
-    port: 8123
+    port: 443
+  - platform: speedtest
+    minute: 15
+    hour:
+      - 0
+      - 6
+      - 12
+      - 19
+    monitored_conditions:
+      - ping
+      - download
+      - upload
+
+  - platform: template
+    sensors:
+      garage_door_status:
+        friendly_name: 'State of the door'
+        value_template: '{{ states.cover.garage_door.state }}'
+      garage_door_time_in_state:
+        friendly_name: 'Since'
+        value_template: '{{ states.cover.garage_door.attributes.time_in_state }}'
+      garage_door_wifi_signal_strength:
+        friendly_name: 'WiFi strength'
+        value_template: '{{ states.cover.garage_door.attributes.wifi_signal_strength }}'
+        unit_of_measurement: 'dB'

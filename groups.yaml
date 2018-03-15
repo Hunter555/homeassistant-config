@@ -8,6 +8,9 @@ default_view:
       - group.Family
       - group.Study
       - group.Lounge_Room
+      - group.Gym
+      - group.garage_door
+      - group.speedtest
       - group.all_automations
       - group.Coffee_Machine
       - camera.entry_cam
@@ -19,8 +22,14 @@ Lights_view:
     entities:
       - group.lights
       - group.Scenes
-      - light.spheramid_underlight
       - switch.flux
+
+Automation_view:
+    view: yes
+    name: Automation
+    icon: mdi:robot
+    entities:
+      - group.all_automations
 
 Lights:
   entities:
@@ -29,7 +38,6 @@ Lights:
     - light.entry
     - light.stairs
     - light.hallway
-#    - light.spheramid_underlight
     - light.lounge
     - light.bedroom  
 
@@ -47,8 +55,13 @@ Lounge Room:
   - light.Lounge
   - light.Dining_Table
   - media_player.TV
+  - media_player.Samsung_TV
   - sensor.sonarr_upcoming
   - sensor.plex
+
+Gym:
+  - switch.gym_speakers
+  - media_player.chromecastaudio4835
 
 Study:
   - light.Study
@@ -60,14 +73,26 @@ Family:
     - device_tracker.nikki_nikkisz3
 
 Coffee Machine:
-  - sensor.Silvia_Power
   - switch.Silvia
+
+Speedtest:
+  - sensor.speedtest_download
+  - sensor.speedtest_upload
+  - sensor.speedtest_ping
 
 Transport:
   view: yes
   icon: mdi:car
   entities:
     - group.transport_cameras
+
+garage_door:
+  name: Garage door
+  entities:
+    - cover.garage_door
+    - sensor.garage_door_status
+    - sensor.garage_door_time_in_state
+    - sensor.garage_door_wifi_signal_strength
 
 Transport Cameras:
   entities:

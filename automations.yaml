@@ -1,0 +1,206 @@
+- id: 31c41e08480f4761ba1d84bc379b5df9
+  alias: Coffee weekday warmup
+  hide_entity: false
+  trigger:
+    platform: time
+    at: 06:45:00
+  condition:
+    condition: and
+    conditions:
+    - condition: zone
+      entity_id: device_tracker.hunter_hunterspixel
+      zone: zone.home
+    - condition: time
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+  action:
+    service: homeassistant.turn_on
+    entity_id:
+    - switch.Silvia
+- id: aa91ac10b76049d7b8c36c20a3ad03c3
+  alias: Notify of Rain
+  hide_entity: false
+  trigger:
+    platform: time
+    at: 06:55:00
+  condition:
+    condition: and
+    conditions:
+    - condition: time
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+    - condition: numeric_state
+      entity_id: sensor.weather_precip_probability
+      above: 30
+  action:
+  - service: notify.pushbullet
+    data:
+      message: Rain is expected today
+- id: 74fc02fd98a345c7bcd41cddf1d320cd
+  alias: Certificate Expiry Warning
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: sensor.ssl_certificate_expiry
+    from: '4'
+    to: '3'
+  action:
+    service: notify.pushbullet
+    data:
+      message: HomeAssistant certificate expiring in 3 days
+- id: 61ef041cedc14cc29a3087d02c67bc17
+  alias: Turn off things I left off
+  hide_entity: false
+  trigger:
+    platform: state
+    entity_id: group.Family
+    from: home
+    to: not_home
+  action:
+  - service: homeassistant.turn_off
+    entity_id:
+    - group.Lounge_Room
+    - light.Study
+    - switch.Silvia
+    - switch.PC
+    - switch.gym_speakers
+    - light.Bedroom
+    - light.Entry
+    - light.Hallway
+    - light.Stairs
+- id: fecafe1ec73542aab9b1ef636facefc5
+  alias: Left Music On
+  hide_entity: false
+  trigger:
+    platform: state
+    entity_id: group.Family
+    from: home
+    to: not_home
+  condition:
+    condition: state
+    entity_id: media_player.tunes
+    state: playing
+  action:
+  - service: media_player.media_pause
+    entity_id: media_player.tunes
+- id: 06f124acc60a49fc9c85b33e579d5f94
+  alias: Arrival Notify
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: device_tracker.nikki_nikkisz3
+    from: not_home
+    to: home
+  condition:
+    condition: state
+    entity_id: device_tracker.hunter_hunterspixel
+    state: home
+  action:
+    service: notify.pushbullet
+    data:
+      message: Nikki is home
+- id: 412246de78934e02aa2d405cbe00a214
+  alias: Turn the lights on when we arrive at night
+  hide_entity: true
+  trigger:
+    platform: state
+    entity_id: device_tracker.hunter_hunterspixel, device_tracker.nikki_nikkisz3
+    from: not_home
+    to: home
+  condition:
+    condition: or
+    conditions:
+    - condition: sun
+      after: sunset
+    - condition: sun
+      before: sunrise
+  action:
+  - service: notify.pushbullet
+    data:
+      message: Welcome home
+  - service: homeassistant.turn_on
+    entity_id: light.entry
+- id: d823f6cba3b54bf1848db1a2e9820d00
+  alias: Dim the lights when we watch Plex
+  hide_entity: false
+  trigger:
+  - platform: state
+    entity_id: sensor.Plex
+    from: '0'
+    to: '1'
+  condition:
+    condition: state
+    entity_id: media_player.samsung_tv
+    state: 'on'
+  action:
+    service: scene.turn_on
+    entity_id: scene.livingroom_dim
+- id: '1520327583216'
+  alias: Turn on the lights with the tv
+  trigger:
+    entity_id: media_player.samsung_tv
+    platform: state
+    from: 'off'
+    to: 'on'
+  action:
+  - service: light.turn_on
+    data:
+      entity_id: light.lounge
+  - service: notify.pushbullet
+    data:
+      message: Turning the lights on with the tv
+  condition:
+    after: sunset
+    condition: sun
+- action:
+  - data:
+      entity_id: scene.alarm
+    service: scene.turn_on
+  alias: Weekend Alarm
+  condition:
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: device_tracker.hunter_hunterspixel
+      state: home
+    - condition: time
+      weekday:
+      - sat
+      - sun
+  id: '1520409505164'
+  trigger:
+  - event_data: {}
+    event_type: ''
+    platform: event
+- action:
+  - data:
+      entity_id: switch.gym_speakers
+    service: switch.turn_on
+  alias: Turn on gym speakers with Chromecast
+  condition: []
+  id: '1521017777150'
+  trigger:
+  - entity_id: media_player.chromecastaudio4835
+    platform: state
+    to: playing
+- action:
+  - data:
+      entity_id: switch.gym_speakers
+    service: switch.turn_off
+  alias: Turn off the gym speaker when no longer listening
+  condition: []
+  id: '1521018025766'
+  trigger:
+  - entity_id: media_player.chromecastaudio4835
+    platform: state
+    to: paused
+    for:
+      seconds: 30

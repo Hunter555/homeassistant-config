@@ -1,36 +1,17 @@
-#group.transport_cameras:
-#  hidden: true
+group.all_automations:
+  hidden: false
+automation.turn_off_things_i_left_off: {}
+switch.flux:
+  assumed_state: true
 
-light.stairs:
-  emulated_hue: true
 
-light.study:
-  emulated_hue: true
-
-light.dining_table:
-  emulated_hue: true
-  emulated_hue_name: "Dining Table"
-
-light.spheramid_underlight:
-  emulated_hue: true
-  emulated_hue_name: "Sphere"
-
-light.bedroom:
-  emulated_hue: true
-
-light.hallway:
-  emulated_hue: true
-
-light.lounge:
-  emulated_hue: true
-
-light.entry:
-  emulated_hue: true
-
-media_player.tunes:
-  emulated_hue: true
-  emulated_hue_name: "Office Stereo"
-
+sensor.garage_door_time_in_state:
+  icon: mdi:timer-sand
+sensor.garage_door_wifi_signal_strength:
+  icon: mdi:wifi
 switch.my_pc:
-  emulated_hue: true
-  emulated_hue_name: "My PC"
+  icon: mdi:desktop-classic
+switch.gym_speakers:
+  icon: mdi:speaker
+switch.silvia:
+  icon: mdi:coffee
