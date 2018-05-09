@@ -62,3 +62,11 @@
         friendly_name: 'WiFi strength'
         value_template: '{{ states.cover.garage_door.attributes.wifi_signal_strength }}'
         unit_of_measurement: 'dB'
+
+
+  - platform: template
+    sensors:
+      shower_on:
+        friendly_name: 'Shower on'
+        value_template: '{{ ((states.sensor.humidity_158d000210aa65.state | float - states.sensor.humidity_158d0001e7b92f.state | float) > 27) or states.sensor.humidity_158d000210aa65.state | float > 95 }}'
+

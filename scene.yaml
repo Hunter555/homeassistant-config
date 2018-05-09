@@ -3,7 +3,7 @@
     light.Lounge:
       state: on
       #transition: 2
-      brightness: 150
+      brightness: 255
 
 - name: Livingroom dim
   entities:
@@ -14,5 +14,10 @@
 
 - name: Alarm
   entities:
+    light.bedroom:
+      state: on
+      transition: 10
+      brightness: 255
     switch.silvia:
       state: on
+

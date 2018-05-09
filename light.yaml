@@ -30,6 +30,9 @@
       - number: 2
         type: rgbw
         name: Lounge
+      - number: 3
+        type: rgbw
+        name: Gym
 
   #- platform: mqtt_template
    # name: "Spheramid Underlight"

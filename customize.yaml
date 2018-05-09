@@ -3,8 +3,6 @@ group.all_automations:
 automation.turn_off_things_i_left_off: {}
 switch.flux:
   assumed_state: true
-
-
 sensor.garage_door_time_in_state:
   icon: mdi:timer-sand
 sensor.garage_door_wifi_signal_strength:
@@ -15,3 +13,31 @@ switch.gym_speakers:
   icon: mdi:speaker
 switch.silvia:
   icon: mdi:coffee
+binary_sensor.door_window_sensor_158d0001f38110:
+  friendly_name: Front Door
+  icon: mdi:door
+binary_sensor.water_leak_sensor_158d0002115f31:
+  friendly_name: Aquarium Leak Sensor
+sensor.temperature_158d0001e7b92f:
+  friendly_name: Study Temperature
+sensor.humidity_158d0001e7b92f:
+  friendly_name: Study Humidity
+  icon: mdi:water-percent
+binary_sensor.door_window_sensor_158d0001b77bc5:
+  friendly_name: Bathroom door
+  icon: mdi:door
+binary_sensor.door_window_sensor_158d0001b1b1ba:
+  friendly_name: Pantry door
+  icon: mdi:door
+sensor.temperature_158d000210aa65:
+  friendly_name: Bathroom Temperature
+sensor.humidity_158d000210aa65:
+  friendly_name: Bathroom Humidity
+  icon: mdi:water-percent
+switch.plug_158d00020f3b00:
+  friendly_name: Bathroom Fan
+  icon: mdi:fan
+sensor.shower_on:
+  icon: mdi:water-pump
+scene.alarm:
+  icon: mdi:alarm

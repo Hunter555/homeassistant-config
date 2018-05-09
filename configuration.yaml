@@ -23,6 +23,7 @@ google_assistant:
   api_key: !secret google_api_key
   exposed_domains:
     - light
+    - cover
   entity_config:
     switch.Silvia:
       type: switch
@@ -34,9 +35,6 @@ google_assistant:
       type: switch
       expose: true
     switch.Gym_Speakers:
-      type: switch
-      expose: true
-    cover.garage_door:
       type: switch
       expose: true
 
@@ -207,6 +205,7 @@ notify:
 
 light: !include light.yaml
 group: !include groups.yaml
+script: !include scripts.yaml
 
 cover:
   - platform: garadget
@@ -215,6 +214,24 @@ cover:
         username: !secret garadget_user
         password: !secret garadget_password
         name: Garage door
+
+input_datetime:
+  weekday_wakeup_time:
+    name: Weekday Wake-up Time
+    has_date: false
+    has_time: true
+    initial: '07:15'
+  weekend_wakeup_time:
+    name: Weekend Wake-up Time
+    has_date: false
+    has_time: true
+    initial: '10:00'
+
+
+xiaomi_aqara:
+  discovery_retry: 5
+  gateways:
+    - key: !secret xiaomi_password
 
 zone:
   name: Home

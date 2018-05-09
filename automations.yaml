@@ -57,7 +57,7 @@
     data:
       message: HomeAssistant certificate expiring in 3 days
 - id: 61ef041cedc14cc29a3087d02c67bc17
-  alias: Turn off things I left off
+  alias: Turn off things I left on
   hide_entity: false
   trigger:
     platform: state
@@ -91,22 +91,6 @@
   action:
   - service: media_player.media_pause
     entity_id: media_player.tunes
-- id: 06f124acc60a49fc9c85b33e579d5f94
-  alias: Arrival Notify
-  hide_entity: true
-  trigger:
-    platform: state
-    entity_id: device_tracker.nikki_nikkisz3
-    from: not_home
-    to: home
-  condition:
-    condition: state
-    entity_id: device_tracker.hunter_hunterspixel
-    state: home
-  action:
-    service: notify.pushbullet
-    data:
-      message: Nikki is home
 - id: 412246de78934e02aa2d405cbe00a214
   alias: Turn the lights on when we arrive at night
   hide_entity: true
@@ -146,19 +130,16 @@
 - id: '1520327583216'
   alias: Turn on the lights with the tv
   trigger:
-    entity_id: media_player.samsung_tv
-    platform: state
+  - entity_id: media_player.samsung_tv
     from: 'off'
+    platform: state
     to: 'on'
   action:
-  - service: light.turn_on
-    data:
+  - data:
       entity_id: light.lounge
-  - service: notify.pushbullet
-    data:
-      message: Turning the lights on with the tv
+    service: light.turn_on
   condition:
-    after: sunset
+  - after: sunset
     condition: sun
 - action:
   - data:
@@ -177,9 +158,9 @@
       - sun
   id: '1520409505164'
   trigger:
-  - event_data: {}
-    event_type: ''
-    platform: event
+    platform: template
+    value_template: '{{ states(''sensor.time'') == (states.input_datetime.weekend_wakeup_time.attributes.timestamp
+      | int | timestamp_custom(''%H:%M'', False)) }}'
 - action:
   - data:
       entity_id: switch.gym_speakers
@@ -204,3 +185,126 @@
     to: paused
     for:
       seconds: 30
+- action:
+  - data:
+      message: Water leak detected!
+    service: notify.pushbullet
+  alias: Water Alarm
+  condition: []
+  id: '1524401072541'
+  trigger:
+  - entity_id: binary_sensor.water_leak_sensor_158d0002115f31
+    from: 'off'
+    platform: state
+- action:
+  - data:
+      message: Garage door opened
+    service: notify.pushbullet
+  alias: Garage Door Alarm
+  condition:
+    condition: or
+    conditions:
+    - condition: state
+      entity_id: device_tracker.hunter_hunterspixel
+      state: not_home
+    - condition: state
+      entity_id: device_tracker.hunter_hunterspixel
+      state: work
+  id: '1524401200558'
+  trigger:
+  - entity_id: cover.garage_door
+    platform: state
+    to: open
+    for:
+      minutes: 1
+- action:
+  - data:
+      entity_id: light.gateway_light_7811dcb20b46
+    service: light.turn_on
+  alias: Turn on the pantry light
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  id: '1525093789395'
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0001b1b1ba
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: light.gateway_light_7811dcb20b46
+    service: light.turn_off
+  alias: Turn off the pantry light
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  id: '1525094152925'
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0001b1b1ba
+    platform: state
+    to: 'off'
+- action:
+  - service: light.turn_off
+  alias: Long press bedside button
+  condition: []
+  id: '1525094445197'
+  trigger:
+  - entity_id: binary_sensor.switch_158d0001f40663
+    platform: state
+    to: hold
+- action:
+  - data:
+      entity_id: switch.plug_158d00020f3b00
+    service: switch.turn_on
+  alias: Turn on the bathroom fan
+  condition:
+  - condition: state
+    entity_id: binary_sensor.door_window_sensor_158d0001b77bc5
+    state: 'off'
+  id: '1525682046813'
+  trigger:
+  - entity_id: sensor.shower_on
+    platform: state
+    to: 'True'
+- action:
+  - data:
+      entity_id: switch.plug_158d00020f3b00
+    service: switch.turn_off
+  alias: Turn off the bathroom fan
+  condition: []
+  id: '1525682254042'
+  trigger:
+  - entity_id: sensor.shower_on
+    platform: state
+    to: 'False'
+  - entity_id: binary_sensor.door_window_sensor_158d0001b77bc5
+    from: 'off'
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: switch.plug_158d00020f3b00
+    service: switch.turn_on
+  alias: Turn on the bathroom fan with the door
+  condition:
+  - condition: state
+    entity_id: sensor.shower_on
+    state: 'True'
+  id: '1525686734650'
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0001b77bc5
+    for:
+      seconds: 6
+    platform: state
+    to: 'off'
+- action:
+  - service: light.turn_off
+  alias: Turn off lights
+  condition: []
+  id: '1525698358651'
+  trigger:
+  - entity_id: binary_sensor.switch_158d0001f40663
+    platform: state
+    to: 'on'
