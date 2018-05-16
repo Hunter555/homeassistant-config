@@ -23,6 +23,12 @@ sensor.temperature_158d0001e7b92f:
 sensor.humidity_158d0001e7b92f:
   friendly_name: Study Humidity
   icon: mdi:water-percent
+sensor.temperature_158d0001e87d1f:
+  friendly_name: Outside Temperature
+sensor.humidity_158d0001e87d1f:
+  friendly_name: Outside Humidity
+  icon: mdi:water-percent
+
 binary_sensor.door_window_sensor_158d0001b77bc5:
   friendly_name: Bathroom door
   icon: mdi:door

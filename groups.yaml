@@ -61,6 +61,8 @@ Weather:
   - sensor.weather_summary
   - sensor.bom_feels_like_c
   - sensor.bom_air_temp_c
+  - sensor.temperature_158d0001e87d1f
+  - sensor.humidity_158d0001e87d1f
 
 Entry:
   - binary_sensor.door_window_sensor_158d0001f38110
