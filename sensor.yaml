@@ -7,10 +7,10 @@
     monitored_conditions:
      - upcoming
     days: 7
-  - platform: plex
-    host: 10.0.0.2
-    username: !secret plex_username
-    password: !secret plex_password
+#  - platform: plex
+#    host: 10.0.0.2
+#    username: !secret plex_username
+#    password: !secret plex_password
   #- platform: mqtt
   #  state_topic: "$device/80d5a43df8/channel/1-1794/event/state"
   #  name: Silvia Power

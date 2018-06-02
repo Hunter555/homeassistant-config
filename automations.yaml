@@ -216,7 +216,7 @@
     platform: state
     to: open
     for:
-      minutes: 1
+      minutes: 2
 - action:
   - data:
       entity_id: light.gateway_light_7811dcb20b46

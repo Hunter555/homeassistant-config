@@ -26,16 +26,16 @@ google_assistant:
     - cover
   entity_config:
     switch.Silvia:
-      type: switch
+    #  type: switch
       expose: true
     #media_player.Tunes:
     #  type: media_player
     #  expose: true
     switch.My_pc:
-      type: switch
+    #  type: switch
       expose: true
     switch.Gym_Speakers:
-      type: switch
+    #  type: switch
       expose: true
 
 camera:

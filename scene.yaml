@@ -12,12 +12,25 @@
       #transition: 2
       brightness: 40
 
+- name: PreAlarm
+  entities:
+    switch.silvia:
+      state: on
+
 - name: Alarm
+  entities:
+    light.bedroom:
+      state: on
+      #transition: 10
+      brightness: 25
+    switch.silvia:
+      state: on
+    media_player.kitchen_home:
+      state: playing
+
+- name: PostAlarm
   entities:
     light.bedroom:
       state: on
       transition: 10
       brightness: 255
-    switch.silvia:
-      state: on
-
