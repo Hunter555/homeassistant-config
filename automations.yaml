@@ -39,7 +39,7 @@
       - fri
     - condition: numeric_state
       entity_id: sensor.weather_precip_probability
-      above: 30
+      above: 10
   action:
   - service: notify.pushbullet
     data:
@@ -219,7 +219,9 @@
       minutes: 2
 - action:
   - data:
-      entity_id: light.gateway_light_7811dcb20b46
+      entity_id:
+      - light.gateway_light_7811dcb20b46
+      - light.pantry
     service: light.turn_on
   alias: Turn on the pantry light
   condition:
@@ -233,7 +235,9 @@
     to: 'on'
 - action:
   - data:
-      entity_id: light.gateway_light_7811dcb20b46
+      entity_id:
+      - light.gateway_light_7811dcb20b46
+      - light.pantry
     service: light.turn_off
   alias: Turn off the pantry light
   condition:
@@ -308,3 +312,21 @@
   - entity_id: binary_sensor.switch_158d0001f40663
     platform: state
     to: 'on'
+- id: '1529573776011'
+  alias: Weekday Alarm
+  trigger:
+  - platform: template
+    value_template: '{{ states(''sensor.time'') == (states.input_datetime.weekday_wakeup_time.attributes.timestamp
+      | int | timestamp_custom(''%H:%M'', False)) }}'
+  condition:
+  - condition: state
+    entity_id: device_tracker.hunter_hunterspixel
+    state: home
+  - condition: time
+    weekday:
+     - sat
+     - sun
+  action:
+  - data:
+      entity_id: scene.alarm
+    service: scene.turn_on

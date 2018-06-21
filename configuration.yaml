@@ -26,16 +26,10 @@ google_assistant:
     - cover
   entity_config:
     switch.Silvia:
-    #  type: switch
       expose: true
-    #media_player.Tunes:
-    #  type: media_player
-    #  expose: true
     switch.My_pc:
-    #  type: switch
       expose: true
     switch.Gym_Speakers:
-    #  type: switch
       expose: true
 
 camera:
@@ -94,9 +88,22 @@ history:
       - automation
       - weblink
       - updater
+      - cover
+      - camera
+      - time
+      - sun
+      - device_tracker
+      - group
     entities:
       - sensor.last_boot
       - sensor.date
+      - sensor.garage_door_time_in_state
+      - sensor.garage_door_wifi_signal_strength
+      - sensor.garage_door_status
+      - sensor.sonarr_upcoming
+      - sensor.time
+      - sensor.illumination_7811dcb20b46
+      - sensor.ssl_certificate_expiry
 
 #recorder:
 #  exclude:
@@ -116,9 +123,20 @@ logbook:
       - sensor.date
       - sensor.garage_door_time_in_state
       - sensor.garage_door_wifi_signal_strength
+      - sensor.garage_door_status
+      - sensor.sonarr_upcoming
+      - sensor.time
+      - sensor.illumination_7811dcb20b46
+      - sensor.ssl_certificate_expiry
     domains:
-      - sun
       - weblink
+      - updater
+      - cover
+      - camera
+      - time
+      - sun
+      - device_tracker
+      - group
 
 # Track the sun
 sun:

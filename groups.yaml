@@ -51,6 +51,7 @@ Lights:
     - light.lounge
     - light.bedroom
     - light.gym
+    - light.pantry
 
 Scenes:
   - scene.livingroom_dim
