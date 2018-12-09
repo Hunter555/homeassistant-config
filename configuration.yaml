@@ -9,6 +9,9 @@ homeassistant:
   time_zone: Australia/Sydney
   customize: !include customize.yaml
 
+weather:
+  - platform: darksky
+    api_key: !secret darksky_key
 
 # Enables the frontend
 frontend:
@@ -17,9 +20,6 @@ config:
 
 google_assistant:
   project_id: level-mark-166706
-  client_id: !secret google_client_id
-  access_token: !secret google_access_token
-  agent_user_id: hunter
   api_key: !secret google_api_key
   exposed_domains:
     - light
@@ -27,10 +27,16 @@ google_assistant:
   entity_config:
     switch.Silvia:
       expose: true
+    switch.plug_158d00020f3b00:
+      expose: true
     switch.My_pc:
       expose: true
     switch.Gym_Speakers:
       expose: true
+map:
+
+geo_location:
+  - platform: nsw_rural_fire_service_feed
 
 camera:
   - platform: generic
@@ -62,13 +68,13 @@ http:
   ssl_key: !secret ssl_key
 
 device_tracker:
-  - platform: owntracks
-    max_gps_accuracy: 200
+ # - platform: owntracks
+ #   max_gps_accuracy: 200
   - platform: netgear
     host: 10.0.0.1
     username: !secret router_username
     password: !secret router_password
-    consider_home: 340
+    consider_home: 900
     interval_seconds: 12
     track_new_devices: yes
 
@@ -204,12 +210,6 @@ media_player:
   - platform: gpmdp
     name: Tunes
     host: 10.0.0.2
-  - platform: cast
-    name: TV
-    host: 10.0.0.18
-  - platform: cast
-    name: Gym Speaker
-    host: 10.0.0.20
   - platform: samsungtv
     host: 10.0.0.55
     port: 8001

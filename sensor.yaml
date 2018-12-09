@@ -1,12 +1,12 @@
   - platform: time_date
     display_options:
       - 'time'
-  - platform: sonarr
-    api_key: !secret sonarr_key
-    host: 10.0.0.2
-    monitored_conditions:
-     - upcoming
-    days: 7
+#  - platform: sonarr
+#    api_key: !secret sonarr_key
+#    host: 10.0.0.2
+#    monitored_conditions:
+#     - upcoming
+#    days: 7
 #  - platform: plex
 #    host: 10.0.0.2
 #    username: !secret plex_username
@@ -49,6 +49,14 @@
       - ping
       - download
       - upload
+  - platform: transport_nsw
+    stop_id: '208239'
+    name: 'Local Bus'
+    api_key: !secret transport_nsw_key
+  - platform: transport_nsw
+    stop_id: '208172'
+    name: 'Train'
+    api_key: !secret transport_nsw_key
 
   - platform: template
     sensors:

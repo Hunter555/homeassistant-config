@@ -172,19 +172,24 @@
   - entity_id: media_player.chromecastaudio4835
     platform: state
     to: playing
-- action:
+- id: '1521018025766'
+  alias: Turn off the gym speaker when no longer listening
+  trigger:
+  - entity_id: media_player.chromecastaudio4835
+    for:
+      seconds: 30
+    platform: state
+    to: paused
+  - entity_id: media_player.chromecastaudio4835
+    for: 0:00:30
+    from: playing
+    platform: state
+    to: 'off'
+  condition: []
+  action:
   - data:
       entity_id: switch.gym_speakers
     service: switch.turn_off
-  alias: Turn off the gym speaker when no longer listening
-  condition: []
-  id: '1521018025766'
-  trigger:
-  - entity_id: media_player.chromecastaudio4835
-    platform: state
-    to: paused
-    for:
-      seconds: 30
 - action:
   - data:
       message: Water leak detected!
@@ -217,38 +222,35 @@
     to: open
     for:
       minutes: 2
-- action:
+- id: '1525093789395'
+  alias: Turn on the pantry light
+  trigger:
+  - entity_id: binary_sensor.door_window_sensor_158d0001b1b1ba
+    platform: state
+    to: 'on'
+  condition:
+  - after: sunset
+    after_offset: '-90'
+    condition: sun
+  action:
   - data:
       entity_id:
       - light.gateway_light_7811dcb20b46
       - light.pantry
     service: light.turn_on
-  alias: Turn on the pantry light
-  condition:
-  - condition: state
-    entity_id: sun.sun
-    state: below_horizon
-  id: '1525093789395'
+- id: '1525094152925'
+  alias: Turn off the pantry light
   trigger:
   - entity_id: binary_sensor.door_window_sensor_158d0001b1b1ba
     platform: state
-    to: 'on'
-- action:
+    to: 'off'
+  condition: []
+  action:
   - data:
       entity_id:
       - light.gateway_light_7811dcb20b46
       - light.pantry
     service: light.turn_off
-  alias: Turn off the pantry light
-  condition:
-  - condition: state
-    entity_id: sun.sun
-    state: below_horizon
-  id: '1525094152925'
-  trigger:
-  - entity_id: binary_sensor.door_window_sensor_158d0001b1b1ba
-    platform: state
-    to: 'off'
 - action:
   - service: light.turn_off
   alias: Long press bedside button
@@ -324,8 +326,8 @@
     state: home
   - condition: time
     weekday:
-     - sat
-     - sun
+    - sat
+    - sun
   action:
   - data:
       entity_id: scene.alarm

@@ -1,0 +1,233 @@
+title: The Wall Home
+# Include external resources
+resources:
+  - url: /local/my-custom-card.js
+    type: js
+  - url: /local/my-webfont.css
+    type: css
+
+# Optional background for all views. Check https://developer.mozilla.org/en-US/docs/Web/CSS/background for more examples.
+background: center / cover no-repeat url("/background.png") fixed
+# Exclude entities from "Unused entities" view
+excluded_entities:
+  - weblink.router
+views:
+    # View tab title.
+  - icon: mdi:home-assistant
+    # Unique id for direct access /lovelace/${id} and editing it from the UI.
+    id: home
+    # Optional background (overwrites the global background).
+    background: radial-gradient(lightgrey, grey)
+    # Each view can have a different theme applied. Theme should be defined in the frontend.
+    theme: dark-mode
+    # The cards to show on this view.
+    cards:
+      - type: weather-forecast
+        title: Forecast
+        id: weather
+        entity: weather.dark_sky
+      - type: entities
+        id: weathercustom
+        entities:
+          - sensor.weather_precip_probability
+          - sensor.bom_feels_like_c
+          - sensor.bom_air_temp_c
+          - sensor.temperature_158d0001e87d1f
+          - sensor.humidity_158d0001e87d1f
+        card:
+          type: glance
+        title: Current Conditions
+        # The filter card will filter entities for their state
+      - id: peoplehome # Every card needs an ID, for it to be edited from the UI.
+        type: entity-filter
+        entities:
+          - device_tracker.hunter_hunterspixel
+          - device_tracker.nikki_nikkispixel
+        state_filter:
+          - 'home'
+        card:
+          type: glance
+          title: People
+      - type: vertical-stack
+        cards:
+          - type: picture-glance
+            id: study
+            title: Study
+            image: /local/images/office.jpg
+            entities:
+              - light.study
+              - switch.my_pc
+              - media_player.tunes
+          - type: sensor
+            id: study_temp
+            entity: sensor.temperature_158d0001e7b92f
+      - type: picture-glance
+        id: gym
+        title: Gym
+        image: /local/images/gym2.jpg
+        entities:
+          - switch.gym_speakers
+          - light.gym
+          - media_player.chromecastaudio4835
+          - light.stairs
+      - type: picture-glance
+        id: loungeroom
+        title: Lounge Room
+        image: /local/images/lounge.jpg
+        entities:
+          - light.lounge
+          - binary_sensor.water_leak_sensor_158d0002115f31
+          - media_player.tv
+          - media_player.samsung_tv
+      - type: picture-entity
+        id: dining
+        title: Dining table
+        tap_action: toggle
+        image: /local/images/dining.jpg
+        entity: light.dining_table
+        hold_action: more-info
+      - type: picture-glance
+        id: entry
+        title: Entrance
+        entities:
+          - binary_sensor.door_window_sensor_158d0001f38110
+          - light.entry
+        camera_image: camera.entry_cam
+      - type: picture-glance
+        id: bathroom
+        title: Bathroom
+        image: /local/images/bathroom.jpg
+        entities:
+          - sensor.shower_on
+          - binary_sensor.door_window_sensor_158d0001b77bc5
+          - sensor.humidity_158d000210aa65
+          - switch.plug_158d00020f3b00
+      - type: picture-entity
+        id: garage
+        title: Garage
+        state_image:
+          "closed": /local/images/garage_closed.jpg
+          "open": /local/images/garage_open.jpg
+        entity: cover.garage_door
+        tap_action: more-info
+        hold_action: more-info
+      - type: picture-entity
+        id: silvia
+        title: Coffee machine
+        state_image:
+          "on": /local/images/silvia_on.jpg
+          "off": /local/images/silvia_off.jpg
+        entity: switch.silvia
+        tap_action: toggle
+        hold_action: more-info
+        # The picture entity card will represent an entity with a picture
+      - type: picture-entity
+        id: bedroom
+        title: Bedroom
+        tap_action: toggle
+        image: /local/images/bedroom.jpg
+        entity: light.bedroom
+        hold_action: more-info
+
+  - icon: mdi:lightbulb
+    id: all_lights_page
+    cards:
+      - type: light
+        entity: light.study
+      - type: light
+        entity: light.dining_table
+      - type: light
+        entity: light.entry
+      - type: light
+        entity: light.stairs
+      - type: light
+        entity: light.hallway
+      - type: light
+        entity: light.lounge
+      - type: light
+        entity: light.bedroom
+      - type: light
+        entity: light.gym
+      - type: light
+        entity: light.pantry
+      - type: glance
+        entities:
+          - switch.flux
+
+  - title: Sensors
+    id: sensors_page
+    cards:
+      - type: vertical-stack
+        id: speedtest
+        title: Speedtest
+        cards:
+          - type: gauge
+            id: speedtest_speed
+            title: Download
+            entity: sensor.speedtest_download
+            max: 95
+            severity:
+              green: 75
+              yellow: 50
+              red: 0
+          - type: gauge
+            id: speedtest_upload
+            title: Upload
+            entity: sensor.speedtest_upload
+            max: 38
+            severity:
+              green: 20
+              yellow: 10
+              red: 0
+          - type: sensor
+            id: speedtest_ping
+            title: Ping
+            entity: sensor.speedtest_ping
+      - type: glance
+        id: all_sensors
+        title: All Sensors
+        entities:
+          - sensor.time
+          - binary_sensor.door_window_sensor_158d0001b1b1ba
+          - binary_sensor.door_window_sensor_158d0001b77bc5
+          - binary_sensor.door_window_sensor_158d0001f38110
+          - binary_sensor.switch_158d0001f40663
+          - binary_sensor.water_leak_sensor_158d0002115f31
+          - binary_sensor.water_leak_sensor_158d0002337473
+          - binary_sensor.water_leak_sensor_158d000233865a
+          - sensor.garage_door_status
+          - sensor.garage_door_time_in_state
+          - sensor.garage_door_wifi_signal_strength
+          - sensor.humidity_158d0001e7b92f
+          - sensor.humidity_158d0001e87d1f
+          - sensor.humidity_158d000210aa65
+          - sensor.illumination_7811dcb20b46
+          - sensor.local_bus
+          - sensor.train
+          - sensor.shower_on
+          - sensor.ssl_certificate_expiry
+          - sensor.temperature_158d0001e7b92f
+          - sensor.temperature_158d0001e87d1f
+          - sensor.temperature_158d000210aa65
+          - sensor.weather_precip_probability
+    # Specify a tab icon if you want the view tab to be an icon.
+  - title: Automations
+    id: automations_page
+    # Title of the view. Will be used as the tooltip for tab icon
+    cards:
+        # Entities card will take a list of entities and show their state.
+      - type: glance
+        id: automations
+        # Title of the entities card
+        title: Automations
+        # The entities here will be shown in the same order as specified.
+        # Each entry is an entity ID or a map with extra options.
+        entities:
+          - group.all_automations
+
+        # The markdown card will render markdown text.
+      - type: markdown
+        id: markdown
+        title: Lovelace
+        content: >-
+          Welcome to your **Lovelace UI**.

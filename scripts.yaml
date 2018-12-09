@@ -1,3 +1,0 @@
-
-#       '{{ {% if (sensor.humidity_158d000210aa65 | float - sensor.humidity_158d0001e7b92f | float) > 25 %}
-

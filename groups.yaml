@@ -12,10 +12,10 @@ default_view:
       - group.Entry
       - group.garage_door
       - group.Bathroom
-      - group.speedtest
-      - group.all_automations
       - group.Coffee_Machine
       - camera.entry_cam
+      - group.speedtest
+      - group.Leak_sensors
 
 Lights_view:
     view: yes
@@ -32,14 +32,6 @@ Automation_view:
     icon: mdi:robot
     entities:
       - group.all_automations
-
-Alarm_view:
-  view: yes
-  name: Alarms
-  icon: mdi:clock
-  entities:
-    - input_datetime.weekday_wakeup_time 
-    - input_datetime.weekend_wakeup_time
 
 Lights:
   entities:
@@ -93,20 +85,22 @@ Study:
 Bathroom:
   - binary_sensor.door_window_sensor_158d0001b77bc5
   - sensor.humidity_158d000210aa65
-  - sensor.temperature_158d000210aa65
-  - switch.plug_158d00020f3b00
-  - sensor.shower_on
 
 Pantry:
+  - binary_sensor.door_window_sensor_158d0001b77bc5
   - binary_sensor.door_window_sensor_158d0001b1b1ba
   - light.gateway_light_7811dcb20b46
 
 Family:
     - device_tracker.hunter_hunterspixel
-    - device_tracker.nikki_nikkisz3
+    - device_tracker.nikki_nikkispixel
 
 Coffee Machine:
   - switch.Silvia
+
+Leak sensors:
+  - binary_sensor.water_leak_sensor_158d0002337473
+  - binary_sensor.water_leak_sensor_158d000233865a
 
 Speedtest:
   - sensor.speedtest_download
