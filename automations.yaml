@@ -93,25 +93,28 @@
     entity_id: media_player.tunes
 - id: 412246de78934e02aa2d405cbe00a214
   alias: Turn the lights on when we arrive at night
-  hide_entity: true
   trigger:
-    platform: state
-    entity_id: device_tracker.hunter_hunterspixel, device_tracker.nikki_nikkisz3
+  - entity_id: device_tracker.hunter_hunterspixel
     from: not_home
+    platform: state
+    to: home
+  - entity_id: device_tracker.nikki_nikkispixel
+    from: not_home
+    platform: state
     to: home
   condition:
-    condition: or
-    conditions:
-    - condition: sun
-      after: sunset
-    - condition: sun
-      before: sunrise
+  - after: sunset
+    after_offset: '-60'
+    before: sunrise
+    before_offset: '60'
+    condition: sun
   action:
-  - service: notify.pushbullet
-    data:
+  - data:
       message: Welcome home
-  - service: homeassistant.turn_on
-    entity_id: light.entry
+    service: notify.pushbullet
+  - entity_id: light.entry
+    service: light.turn_on
+  hide_entity: true
 - id: d823f6cba3b54bf1848db1a2e9820d00
   alias: Dim the lights when we watch Plex
   hide_entity: false
@@ -332,3 +335,12 @@
   - data:
       entity_id: scene.alarm
     service: scene.turn_on
+- id: '1544439026982'
+  alias: Set Initial States
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - service: homeassistant.turn_on
+    entity_id: switch.flux

@@ -39,6 +39,8 @@ binary_sensor.water_leak_sensor_158d000233865a:
   friendly_name: Guest Bathroom Leak Sensor
 binary_sensor.water_leak_sensor_158d0002337473:
   friendly_name: Laundry Leak Sensor
+binary_sensor.Switch_158d0001f40663:
+  friendly_name: Bed Switch
 sensor.temperature_158d000210aa65:
   friendly_name: Bathroom Temperature
 sensor.humidity_158d000210aa65:

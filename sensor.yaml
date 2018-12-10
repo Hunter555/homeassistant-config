@@ -52,11 +52,31 @@
   - platform: transport_nsw
     stop_id: '208239'
     name: 'Local Bus'
+    route: '599'
+    api_key: !secret transport_nsw_key
+  - platform: transport_nsw
+    stop_id: '208171'
+    name: 'Platform 1'
     api_key: !secret transport_nsw_key
   - platform: transport_nsw
     stop_id: '208172'
-    name: 'Train'
+    name: 'Platform 2'
     api_key: !secret transport_nsw_key
+  - platform: nsw_fuel_station
+    station_id: 196
+    fuel_types: ["P98"]
+  - platform: nsw_fuel_station
+    station_id: 2198
+    fuel_types: ["P98"]
+  - platform: nsw_fuel_station
+    station_id: 1465
+    fuel_types: ["P98"]
+
+  - platform: mold_indicator
+    indoor_temp_sensor: sensor.temperature_158d0001e7b92f
+    indoor_humidity_sensor: sensor.humidity_158d0001e7b92f
+    outdoor_temp_sensor: sensor.temperature_158d0001e87d1f
+    calibration_factor: 2.375
 
   - platform: template
     sensors:

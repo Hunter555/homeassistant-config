@@ -17,7 +17,7 @@ views:
     # Unique id for direct access /lovelace/${id} and editing it from the UI.
     id: home
     # Optional background (overwrites the global background).
-    background: radial-gradient(lightgrey, grey)
+    background: radial-gradient(darkgrey, black)
     # Each view can have a different theme applied. Theme should be defined in the frontend.
     theme: dark-mode
     # The cards to show on this view.
@@ -64,7 +64,7 @@ views:
       - type: picture-glance
         id: gym
         title: Gym
-        image: /local/images/gym2.jpg
+        image: /local/images/gym3.jpg
         entities:
           - switch.gym_speakers
           - light.gym
@@ -73,7 +73,7 @@ views:
       - type: picture-glance
         id: loungeroom
         title: Lounge Room
-        image: /local/images/lounge.jpg
+        image: /local/images/lounge2.jpg
         entities:
           - light.lounge
           - binary_sensor.water_leak_sensor_158d0002115f31
@@ -184,37 +184,82 @@ views:
             title: Ping
             entity: sensor.speedtest_ping
       - type: glance
-        id: all_sensors
-        title: All Sensors
+        id: transport_sensors
+        title: Transport
         entities:
-          - sensor.time
-          - binary_sensor.door_window_sensor_158d0001b1b1ba
-          - binary_sensor.door_window_sensor_158d0001b77bc5
-          - binary_sensor.door_window_sensor_158d0001f38110
-          - binary_sensor.switch_158d0001f40663
-          - binary_sensor.water_leak_sensor_158d0002115f31
-          - binary_sensor.water_leak_sensor_158d0002337473
-          - binary_sensor.water_leak_sensor_158d000233865a
-          - sensor.garage_door_status
-          - sensor.garage_door_time_in_state
-          - sensor.garage_door_wifi_signal_strength
-          - sensor.humidity_158d0001e7b92f
-          - sensor.humidity_158d0001e87d1f
-          - sensor.humidity_158d000210aa65
-          - sensor.illumination_7811dcb20b46
           - sensor.local_bus
-          - sensor.train
-          - sensor.shower_on
-          - sensor.ssl_certificate_expiry
+          - sensor.platform_1
+          - sensor.platform_2
+      - type: vertical-stack
+        id: fuel_stack
+        title: 98 Octane Price
+        cards:
+          - type: sensor
+            id: 7elevenP98
+            entity: sensor.7eleven_berowra_p98
+          - type: sensor
+            entity: sensor.bp_berowra_p98
+          - type: sensor
+            entity: sensor.bp_normanhurst_p98
+      - type: gauge
+        id: mold_gauge
+        title: Mold Risk
+        entity: sensor.mold_indicator
+        severity:
+          green: 0
+          yellow: 70
+          red: 75
+      - type: glance
+        title: Temperature Sensors
+        id: all_temp_sensors
+        entities:
           - sensor.temperature_158d0001e7b92f
           - sensor.temperature_158d0001e87d1f
           - sensor.temperature_158d000210aa65
-          - sensor.weather_precip_probability
+      - type: glance
+        title: Humidity Sensors
+        id: all_humidity_sensors
+        entities:
+          - sensor.humidity_158d0001e7b92f
+          - sensor.humidity_158d0001e87d1f
+          - sensor.humidity_158d000210aa65
+      - type: glance
+        title: Leak Sensors
+        id: all_leak_sensors
+        entities:
+          - binary_sensor.water_leak_sensor_158d0002115f31
+          - binary_sensor.water_leak_sensor_158d0002337473
+          - binary_sensor.water_leak_sensor_158d000233865a
+      - type: glance
+        title: Doors
+        id: all_door_sensors
+        entities:
+          - binary_sensor.door_window_sensor_158d0001b1b1ba
+          - binary_sensor.door_window_sensor_158d0001b77bc5
+          - binary_sensor.door_window_sensor_158d0001f38110
+      - type: glance
+        id: other_sensors
+        title: Other Sensors
+        entities:
+          - sensor.time
+          - binary_sensor.switch_158d0001f40663
+          - sensor.garage_door_status
+          - sensor.garage_door_time_in_state
+          - sensor.garage_door_wifi_signal_strength
+          - sensor.illumination_7811dcb20b46
+          - sensor.shower_on
+          - sensor.ssl_certificate_expiry
     # Specify a tab icon if you want the view tab to be an icon.
   - title: Automations
     id: automations_page
     # Title of the view. Will be used as the tooltip for tab icon
     cards:
+      - type: glance
+        id: wakeup_times
+        title: Alarm
+        entities:
+          - input_datetime.weekday_wakeup_time
+          - input_datetime.weekend_wakeup_time
         # Entities card will take a list of entities and show their state.
       - type: glance
         id: automations
