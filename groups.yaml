@@ -66,7 +66,7 @@ Lounge Room:
   - light.Dining_Table
   - binary_sensor.water_leak_sensor_158d0002115f31
   - media_player.TV
-  - media_player.Samsung_TV
+  - media_player.living_room_tv
   - sensor.sonarr_upcoming
   - sensor.plex
 
@@ -92,8 +92,8 @@ Pantry:
   - light.gateway_light_7811dcb20b46
 
 Family:
-    - device_tracker.hunter_hunterspixel
-    - device_tracker.nikki_nikkispixel
+    - person.hunter
+    - person.nikki
 
 Coffee Machine:
   - switch.Silvia

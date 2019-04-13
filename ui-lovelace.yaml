@@ -39,12 +39,12 @@ views:
         title: Current Conditions
         # The filter card will filter entities for their state
       - id: peoplehome # Every card needs an ID, for it to be edited from the UI.
-        type: entity-filter
+        type: entities
         entities:
-          - device_tracker.hunter_hunterspixel
-          - device_tracker.nikki_nikkispixel
-        state_filter:
-          - 'home'
+          - person.hunter
+          - person.nikki
+        #state_filter:
+        #  - 'home'
         card:
           type: glance
           title: People
@@ -58,9 +58,13 @@ views:
               - light.study
               - switch.my_pc
               - media_player.tunes
-          - type: sensor
-            id: study_temp
-            entity: sensor.temperature_158d0001e7b92f
+
+          - type: history-graph
+            entities:
+            - entity: sensor.temperature_158d0001e87d1f
+              name: Outdoor Temp
+            - entity: sensor.temperature_158d0001e7b92f
+              name: Study Temp
       - type: picture-glance
         id: gym
         title: Gym
@@ -73,19 +77,17 @@ views:
       - type: picture-glance
         id: loungeroom
         title: Lounge Room
-        image: /local/images/lounge2.jpg
+        image: /local/images/lounge3.jpg
         entities:
           - light.lounge
           - binary_sensor.water_leak_sensor_158d0002115f31
-          - media_player.tv
-          - media_player.samsung_tv
       - type: picture-entity
         id: dining
         title: Dining table
-        tap_action: toggle
+        tap_action: 
+          action: toggle
         image: /local/images/dining.jpg
         entity: light.dining_table
-        hold_action: more-info
       - type: picture-glance
         id: entry
         title: Entrance
@@ -109,8 +111,8 @@ views:
           "closed": /local/images/garage_closed.jpg
           "open": /local/images/garage_open.jpg
         entity: cover.garage_door
-        tap_action: more-info
-        hold_action: more-info
+        tap_action: 
+          action: more-info
       - type: picture-entity
         id: silvia
         title: Coffee machine
@@ -118,16 +120,17 @@ views:
           "on": /local/images/silvia_on.jpg
           "off": /local/images/silvia_off.jpg
         entity: switch.silvia
-        tap_action: toggle
+        tap_action: 
+          action: toggle
         hold_action: more-info
         # The picture entity card will represent an entity with a picture
       - type: picture-entity
         id: bedroom
         title: Bedroom
-        tap_action: toggle
+        tap_action: 
+          action: toggle
         image: /local/images/bedroom.jpg
         entity: light.bedroom
-        hold_action: more-info
 
   - icon: mdi:lightbulb
     id: all_lights_page
@@ -153,6 +156,24 @@ views:
       - type: glance
         entities:
           - switch.flux
+
+  - icon: mdi:cast
+    id: media_page
+    cards:
+      - type: media-control
+        entity: media_player.living_room_tv
+      - type: media-control
+        entity: media_player.tunes
+      - type: media-control
+        entity: media_player.kitchen_display
+#      - type: media-control
+#        entity: media_player.kitchen_home
+      - type: media-control
+        entity: media_player.chromecastaudio4835
+      - type: media-control
+        entity: media_player.googlehome0402
+      - type: media-control
+        entity: media_player.office_home
 
   - title: Sensors
     id: sensors_page
@@ -183,6 +204,7 @@ views:
             id: speedtest_ping
             title: Ping
             entity: sensor.speedtest_ping
+            graph: line
       - type: glance
         id: transport_sensors
         title: Transport
@@ -196,11 +218,14 @@ views:
         cards:
           - type: sensor
             id: 7elevenP98
-            entity: sensor.7eleven_berowra_p98
+            entity: sensor.7_eleven_berowra_p98
+            graph: line
           - type: sensor
             entity: sensor.bp_berowra_p98
+            graph: line
           - type: sensor
             entity: sensor.bp_normanhurst_p98
+            graph: line
       - type: gauge
         id: mold_gauge
         title: Mold Risk
@@ -250,6 +275,47 @@ views:
           - sensor.shower_on
           - sensor.ssl_certificate_expiry
     # Specify a tab icon if you want the view tab to be an icon.
+  - title: Power
+    id: power_page
+    cards:
+      - type: history-graph
+        id: power_usage_sensor
+        entities:
+          - sensor.power_meter
+      - type: sensor
+        entity: sensor.power_meter
+        graph: line
+      - type: glance
+        id: power_tariffs_glance
+        title: Todays Usage
+        entities:
+          - utility_meter.energy
+          - sensor.energy_peak
+          - sensor.energy_offpeak
+          - sensor.energy_shoulder
+          - sensor.hourly_total_power
+      - type: glance
+        id: power_cost_glance
+        title: Todays Costs
+        entities:
+          - sensor.daily_peak_cost
+          - sensor.daily_offpeak_cost
+          - sensor.daily_shoulder_cost
+          - sensor.daily_supply_cost
+          - sensor.daily_total_cost
+      - type: glance
+        id: power_tariffs_rates
+        title: Current Tariffs
+        entities:
+          - input_number.peak_tariff_rate
+          - input_number.offpeak_tariff_rate
+          - input_number.shoulder_tariff_rate
+      - type: glance
+        id: power_control_glance
+        entities:
+          - sensor.power_per_minute_mean
+          - sensor.uptime_sensor
+          - sensor.is_winter_tariff
   - title: Automations
     id: automations_page
     # Title of the view. Will be used as the tooltip for tab icon
@@ -260,7 +326,13 @@ views:
         entities:
           - input_datetime.weekday_wakeup_time
           - input_datetime.weekend_wakeup_time
-        # Entities card will take a list of entities and show their state.
+      - type: glance
+        id: google_home_timers
+        title: Google Timers/Alarms
+        entities:
+          - sensor.display_timer_local
+          - sensor.display_timer_remaining
+          - sensor.kitchen_display_alarm
       - type: glance
         id: automations
         # Title of the entities card
@@ -269,10 +341,4 @@ views:
         # Each entry is an entity ID or a map with extra options.
         entities:
           - group.all_automations
-
-        # The markdown card will render markdown text.
-      - type: markdown
-        id: markdown
-        title: Lovelace
-        content: >-
-          Welcome to your **Lovelace UI**.
+          - automation.turn_off_things_i_left_on

@@ -8,7 +8,7 @@
     condition: and
     conditions:
     - condition: zone
-      entity_id: device_tracker.hunter_hunterspixel
+      entity_id: person.hunter
       zone: zone.home
     - condition: time
       weekday:
@@ -58,15 +58,14 @@
       message: HomeAssistant certificate expiring in 3 days
 - id: 61ef041cedc14cc29a3087d02c67bc17
   alias: Turn off things I left on
-  hide_entity: false
   trigger:
-    platform: state
-    entity_id: group.Family
+  - entity_id: group.Family
+    for: '300'
     from: home
+    platform: state
     to: not_home
   action:
-  - service: homeassistant.turn_off
-    entity_id:
+  - entity_id:
     - group.Lounge_Room
     - light.Study
     - switch.Silvia
@@ -76,6 +75,8 @@
     - light.Entry
     - light.Hallway
     - light.Stairs
+    service: homeassistant.turn_off
+  hide_entity: false
 - id: fecafe1ec73542aab9b1ef636facefc5
   alias: Left Music On
   hide_entity: false
@@ -91,30 +92,6 @@
   action:
   - service: media_player.media_pause
     entity_id: media_player.tunes
-- id: 412246de78934e02aa2d405cbe00a214
-  alias: Turn the lights on when we arrive at night
-  trigger:
-  - entity_id: device_tracker.hunter_hunterspixel
-    from: not_home
-    platform: state
-    to: home
-  - entity_id: device_tracker.nikki_nikkispixel
-    from: not_home
-    platform: state
-    to: home
-  condition:
-  - after: sunset
-    after_offset: '-60'
-    before: sunrise
-    before_offset: '60'
-    condition: sun
-  action:
-  - data:
-      message: Welcome home
-    service: notify.pushbullet
-  - entity_id: light.entry
-    service: light.turn_on
-  hide_entity: true
 - id: d823f6cba3b54bf1848db1a2e9820d00
   alias: Dim the lights when we watch Plex
   hide_entity: false
@@ -133,17 +110,24 @@
 - id: '1520327583216'
   alias: Turn on the lights with the tv
   trigger:
-  - entity_id: media_player.samsung_tv
+  - entity_id: media_player.living_room_tv
     from: 'off'
     platform: state
-    to: 'on'
+    to: playing
+  - event: sunset
+    offset: '-60'
+    platform: sun
+  condition:
+  - after: sunset
+    after_offset: '-60'
+    condition: sun
+  - condition: state
+    entity_id: media_player.living_room_tv
+    state: playing
   action:
   - data:
       entity_id: light.lounge
     service: light.turn_on
-  condition:
-  - after: sunset
-    condition: sun
 - action:
   - data:
       entity_id: scene.alarm
@@ -153,7 +137,7 @@
     condition: and
     conditions:
     - condition: state
-      entity_id: device_tracker.hunter_hunterspixel
+      entity_id: person.hunter
       state: home
     - condition: time
       weekday:
@@ -193,17 +177,18 @@
   - data:
       entity_id: switch.gym_speakers
     service: switch.turn_off
-- action:
-  - data:
-      message: Water leak detected!
-    service: notify.pushbullet
+- id: '1524401072541'
   alias: Water Alarm
-  condition: []
-  id: '1524401072541'
   trigger:
   - entity_id: binary_sensor.water_leak_sensor_158d0002115f31
     from: 'off'
     platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      message: Water leak detected near aquarium!
+    service: notify.pushbullet
 - action:
   - data:
       message: Garage door opened
@@ -213,10 +198,10 @@
     condition: or
     conditions:
     - condition: state
-      entity_id: device_tracker.hunter_hunterspixel
+      entity_id: person.hunter
       state: not_home
     - condition: state
-      entity_id: device_tracker.hunter_hunterspixel
+      entity_id: person.hunter
       state: work
   id: '1524401200558'
   trigger:
@@ -233,7 +218,7 @@
     to: 'on'
   condition:
   - after: sunset
-    after_offset: '-90'
+    after_offset: -02:00:00
     condition: sun
   action:
   - data:
@@ -254,15 +239,17 @@
       - light.gateway_light_7811dcb20b46
       - light.pantry
     service: light.turn_off
-- action:
-  - service: light.turn_off
+- id: '1525094445197'
   alias: Long press bedside button
-  condition: []
-  id: '1525094445197'
   trigger:
   - entity_id: binary_sensor.switch_158d0001f40663
     platform: state
     to: hold
+  condition: []
+  action:
+  - data:
+      entity_id: all
+    service: light.turn_off
 - action:
   - data:
       entity_id: switch.plug_158d00020f3b00
@@ -325,15 +312,17 @@
       | int | timestamp_custom(''%H:%M'', False)) }}'
   condition:
   - condition: state
-    entity_id: device_tracker.hunter_hunterspixel
+    entity_id: person.hunter
     state: home
   - condition: time
     weekday:
-    - sat
-    - sun
+    - mon
+    - tue
+    - wed
+    - fri
   action:
   - data:
-      entity_id: scene.alarm
+      entity_id: scene.Alarm
     service: scene.turn_on
 - id: '1544439026982'
   alias: Set Initial States
@@ -344,3 +333,138 @@
   action:
   - service: homeassistant.turn_on
     entity_id: switch.flux
+- id: '1553416932251'
+  alias: Turn on the lights when we arrive at night
+  trigger:
+  - entity_id: person.hunter
+    event: enter
+    platform: zone
+    zone: zone.home
+  - entity_id: binary_sensor.door_window_sensor_158d0001f38110
+    from: 'off'
+    platform: state
+    to: 'on'
+  - entity_id: person.nikki
+    event: enter
+    platform: zone
+    zone: zone.home
+  condition:
+  - condition: or
+    conditions:
+    - after: sunset
+      after_offset: '-1:00:00'
+      condition: sun
+    - before: sunrise
+      before_offset: '1:00:00'
+      condition: sun
+  action:
+  - data:
+      message: Welcome home
+    service: notify.pushbullet
+  - alias: ''
+    entity_id: light.entry
+    service: light.turn_on
+- id: '1554985557227'
+  alias: Weekday Tariff Change
+  trigger:
+  - at: '6:59'
+    platform: time
+  - at: '13:59'
+    platform: time
+  - at: '19:59'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      entity_id: utility_meter.energy
+    service: utility_meter.next_tariff
+- id: '1554985905896'
+  alias: Weekend Tariff Shoulder
+  trigger:
+  - at: 07:00
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - sat
+    - sun
+  action:
+  - data:
+      entity_id: utility_meter.energy
+      tariff: shoulder
+    service: utility_meter.select_tariff
+- id: '1554985959342'
+  alias: Weekend Tariff Peak
+  trigger:
+  - at: '22:00'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - sat
+    - sun
+  action:
+  - data:
+      entity_id: utility_meter.energy
+      tariff: offpeak
+    service: utility_meter.select_tariff
+- id: '1555116275673'
+  alias: Kitchen timer notification
+  trigger:
+  - below: '1'
+    entity_id: sensor.display_timer_remaining
+    for: '45'
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      message: The kitchen display timer is ready
+    service: notify.pushbullet
+- id: '1555116490673'
+  alias: Weekday Winter Tariff Change
+  initial_state: 'false'
+  trigger:
+  - at: '6:59'
+    platform: time
+  - at: '16:59'
+    platform: time
+  - at: '20:59'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      entity_id: utility_meter.energy
+    service: utility_meter.next_tariff
+- id: '1555121570851'
+  alias: Transition Winter Tariffs
+  trigger:
+  - entity_id: sensor.is_winter_tariff
+    from: 'false'
+    platform: state
+    to: 'true'
+  - entity_id: sensor.is_winter_tariff
+    from: 'true'
+    platform: state
+    to: 'false'
+  condition: []
+  action:
+  - data:
+      entity_id: automation.weekday_tariff_change
+    service: automation.toggle
+  - data:
+      entity_id: automation.weekday_winter_tariff_change
+    service: automation.toggle

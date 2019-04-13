@@ -38,17 +38,6 @@
   - platform: cert_expiry
     host: !secret url
     port: 443
-  - platform: speedtest
-    minute: 15
-    hour:
-      - 0
-      - 6
-      - 12
-      - 19
-    monitored_conditions:
-      - ping
-      - download
-      - upload
   - platform: transport_nsw
     stop_id: '208239'
     name: 'Local Bus'
@@ -71,6 +60,10 @@
   - platform: nsw_fuel_station
     station_id: 1465
     fuel_types: ["P98"]
+  - platform: statistics
+    name: 'Power per minute'
+    entity_id: sensor.power_meter
+    sampling_size: 60
 
   - platform: mold_indicator
     indoor_temp_sensor: sensor.temperature_158d0001e7b92f
@@ -91,6 +84,57 @@
         value_template: '{{ states.cover.garage_door.attributes.wifi_signal_strength }}'
         unit_of_measurement: 'dB'
 
+  - platform: template
+    sensors:
+      display_timer_local:
+        friendly_name: Kitchen Display Timer
+        entity_id: sensor.time
+        value_template: "{{ (states('sensor.kitchen_display_timer')|as_timestamp()|timestamp_local)}}"
+      display_timer_remaining:
+        friendly_name: Kitchen Display Time Remaining
+        entity_id: sensor.time
+        value_template: >
+          {% set timerRemaining = (states('sensor.kitchen_display_timer')|as_timestamp()|timestamp_local|as_timestamp()) %}
+          {% if timerRemaining != None %}
+            {{ ((timerRemaining - now()|as_timestamp())/60)|round(1) }}
+          {% else %}
+            None
+          {% endif %}
+
+  - platform: template
+    sensors:
+      hourly_total_power:
+        friendly_name: Hourly Total
+        value_template: "{{ state_attr('sensor.power_per_minute_mean', 'total')}}"
+        unit_of_measurement: kW 
+      realtime_power:
+        friendly_name: Realtime Power
+        value_template: "{{(state_attr('sensor.power_per_minute_mean', 'total') / 60)|round(2)}}"
+        unit_of_measurement: kwH 
+      daily_peak_cost:
+        friendly_name: Peak
+        value_template: "{{(states('sensor.energy_peak')|float*(states('input_number.peak_tariff_rate')|float / 100))|round(2)}}"
+        unit_of_measurement: $
+      daily_offpeak_cost:
+        friendly_name: Off Peak
+        value_template: "{{(states('sensor.energy_offpeak')|float*(states('input_number.offpeak_tariff_rate')|float / 100))|round(2)}}"
+        unit_of_measurement: $
+      daily_shoulder_cost:
+        friendly_name: Shoulder
+        value_template: "{{(states('sensor.energy_shoulder')|float*(states('input_number.shoulder_tariff_rate')|float / 100))|round(2)}}"
+        unit_of_measurement: $
+      daily_supply_cost:
+        friendly_name: Supply
+        value_template: "0.97"
+        unit_of_measurement: $
+      daily_total_cost:
+        friendly_name: Daily Total
+        value_template: "{{states('sensor.daily_peak_cost')|float + states('sensor.daily_offpeak_cost')|float + states('sensor.daily_shoulder_cost')|float + states('sensor.daily_supply_cost')|float}}"
+        unit_of_measurement: $
+      is_winter_tariff:
+        friendly_name: Winter Tariffs
+        value_template: "{{now().month >= 6 and now().month <= 8}}"
+        entity_id: sensor.date
 
   - platform: template
     sensors:

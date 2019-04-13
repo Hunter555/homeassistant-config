@@ -53,3 +53,38 @@ sensor.shower_on:
   icon: mdi:water-pump
 scene.alarm:
   icon: mdi:alarm
+person.hunter:
+  entity_picture: https://www.gravatar.com/avatar/dd97ba89d5f6fc910c81071a0cf048f6.jpg?s=80&d=wavatar
+person.nikki:
+  entity_picture: https://www.gravatar.com/avatar/87ac9ca0c90dd9df491a791282087052.jpg?s=80&d=wavatar
+
+utility_meter.energy:
+  friendly_name: Current Tarrif
+  icon: mdi:timelapse
+sensor.energy_peak:
+  friendly_name: Peak
+sensor.energy_offpeak:
+  friendly_name: Off Peak
+sensor.energy_shoulder:
+  friendly_name: Shoulder
+sensor.hourly_total_power:
+  icon: mdi:power-socket-au
+
+sensor.daily_peak_cost:
+  icon: mdi:currency-usd
+sensor.daily_offpeak_cost:
+  icon: mdi:currency-usd
+sensor.daily_shoulder_cost:
+  icon: mdi:currency-usd
+sensor.daily_supply_cost:
+  icon: mdi:currency-usd
+sensor.daily_total_cost:
+  icon: mdi:currency-usd
+sensor.is_winter_tariff:
+  icon: mdi:snowflake
+
+
+sensor.display_timer_local:
+  icon: mdi:alarm
+sensor.display_timer_remaining:
+  icon: mdi:alarm

@@ -8,6 +8,11 @@ homeassistant:
   unit_system: metric
   time_zone: Australia/Sydney
   customize: !include customize.yaml
+  auth_providers:
+   - type: homeassistant
+   - type: trusted_networks
+     trusted_networks:
+       - 10.0.0.0/24
 
 weather:
   - platform: darksky
@@ -17,6 +22,16 @@ weather:
 frontend:
 # Enables configuration UI
 config:
+
+logger:
+  default: warning
+
+lovelace:
+  mode: yaml
+
+wake_on_lan:
+
+system_health:
 
 google_assistant:
   project_id: level-mark-166706
@@ -33,14 +48,32 @@ google_assistant:
       expose: true
     switch.Gym_Speakers:
       expose: true
+    media_player.living_room_tv:
+      expose: true
+    media_player.tunes:
+      expose: true
+
+googlehome:
+  devices:
+    - host: 10.0.0.16
+      track_alarms: true
+      device_types: 1
+    - host: 10.0.0.12
+    - host: 10.0.0.13
+
+cast:
+
 map:
 
 geo_location:
   - platform: nsw_rural_fire_service_feed
 
+stream:
+
 camera:
   - platform: generic
     still_image_url: http://10.0.0.10/image/jpeg.cgi
+    #stream_source: http://10.0.0.10/VIDEO.CGI
     username: !secret camera_username
     password: !secret camera_password
     name: Entry Cam
@@ -57,11 +90,12 @@ camera:
     still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/pennanthillsrd_thornleigh.jpg
     name: Thornleigh
 
+
+
 http:
   # Uncomment this to add a password (recommended!)
-  api_password: !secret http_password
-  trusted_networks:
-    - 10.0.0.0/24
+  #api_password: !secret http_password
+  #trusted_networks:
   # Uncomment this if you are using SSL or running in Docker etc
   base_url: !secret base_url
   ssl_certificate: !secret ssl_certificate
@@ -77,6 +111,8 @@ device_tracker:
     consider_home: 900
     interval_seconds: 12
     track_new_devices: yes
+    new_device_defaults:
+      track_new_devices: false
 
 # Checks for available updates
 updater:
@@ -111,16 +147,6 @@ history:
       - sensor.illumination_7811dcb20b46
       - sensor.ssl_certificate_expiry
 
-#recorder:
-#  exclude:
-#    domains:
-#      - automation
-#      - weblink
-#      - updater
-#    entities:
-#      - sun.sun
-#      - sensor.date
-
 # View all events in a logbook
 logbook:
   exclude:
@@ -151,8 +177,6 @@ sensor: !include sensor.yaml
 scene: !include scene.yaml
 automation: !include automations.yaml
 
-logger:
-  default: error
 
 
 # Text to speech
@@ -195,7 +219,7 @@ switch:
     disable_brightness_adjust: True
   - platform: wake_on_lan
     name: My PC
-    mac_address: "ac:22:0b:26:15:08"
+    mac_address: "AC:22:0B:26:15:08"
     host: 10.0.0.2
     turn_off:
       service: switch.turn_off
@@ -210,11 +234,23 @@ media_player:
   - platform: gpmdp
     name: Tunes
     host: 10.0.0.2
-  - platform: samsungtv
-    host: 10.0.0.55
-    port: 8001
-    name: Samsung TV
-    mac: BC:8C:CD:C1:28:3F
+  - platform: webostv
+    host: 10.0.0.21
+    name: Living Room TV
+    timeout: 5
+    turn_on_action:
+      service: wake_on_lan.send_magic_packet
+      data:
+        mac: "2C:2B:F9:32:D6:2E"
+    customize:
+      sources:
+        - livetv
+        - steamlink
+        - chromecast
+        - youtube
+        - foxtel
+        - netflix
+        - amazon
 
 notify:
   - name: Pushbullet
@@ -228,7 +264,8 @@ script: !include scripts.yaml
 cover:
   - platform: garadget
     covers:
-      480056000551353530353431:
+      garage_door:
+        device: !secret garadget_device_id
         username: !secret garadget_user
         password: !secret garadget_password
         name: Garage door
@@ -238,18 +275,52 @@ input_datetime:
     name: Weekday Wake-up Time
     has_date: false
     has_time: true
-    initial: '07:15'
+    initial: '06:57'
   weekend_wakeup_time:
     name: Weekend Wake-up Time
     has_date: false
     has_time: true
-    initial: '10:00'
+    initial: '9:00'
+input_number:
+  peak_tariff_rate:
+    name: Peak
+    max: 100
+    min: 0
+    initial: 53.8
+    step: 0.01
+    unit_of_measurement: c
+  offpeak_tariff_rate:
+    name: Off Peak
+    max: 100
+    min: 0
+    initial: 14.78
+    step: 0.01
+    unit_of_measurement: c
+  shoulder_tariff_rate:
+    name: Shoulder
+    max: 100
+    min: 0
+    initial: 24.21
+    step: 0.01
+    unit_of_measurement: c
+
+utility_meter:
+  energy:
+    source: sensor.realtime_power
+    cycle: daily
+    tariffs:
+      - offpeak
+      - shoulder
+      - peak
+      - shoulder
 
 
 xiaomi_aqara:
   discovery_retry: 5
   gateways:
     - key: !secret xiaomi_password
+
+person:
 
 zone:
   name: Home
@@ -278,3 +349,16 @@ zone 4:
   latitude: !secret nwork2_latitude
   longitude: !secret nwork2_longitude
   icon: mdi:medical-bag
+
+speedtestdotnet:
+  scan_interval:
+    hours: 4
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+
+binary_sensor:
+  - platform: workday
+    country: AU
+    province: NSW
