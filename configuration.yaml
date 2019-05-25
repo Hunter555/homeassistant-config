@@ -57,7 +57,7 @@ googlehome:
   devices:
     - host: 10.0.0.16
       track_alarms: true
-      device_types: 1
+      #device_types: 1
     - host: 10.0.0.12
     - host: 10.0.0.13
 
@@ -113,6 +113,7 @@ device_tracker:
     track_new_devices: yes
     new_device_defaults:
       track_new_devices: false
+  - platform: bluetooth_tracker
 
 # Checks for available updates
 updater:
@@ -189,6 +190,13 @@ mqtt:
   client_id: home-assistant-1
   keepalive: 60
   protocol: 3.1
+  discovery: true
+  birth_message:
+    topic: 'hass/status'
+    payload: 'online'
+  will_message:
+    topic: 'hass/status'
+    payload: 'offline'
 
 switch:
 #  - platform: mqtt
@@ -197,6 +205,12 @@ switch:
 #    payload_on: '{"Method":"turnOn","params":null,"JsonRpc":"2.0"}'
 #    payload_off: '{"Method":"turnOff","params":null,"JsonRpc":"2.0"}'
 #    qos: 0
+  - platform: mqtt
+    name: "Zigbee2mqtt Main join"
+    state_topic: "zigbee2mqtt/bridge/config/permit_join"
+    command_topic: "zigbee2mqtt/bridge/config/permit_join"
+    payload_on: "true"
+    payload_off: "false"
   - platform: xiaomi_miio
     name: Silvia
     host: 10.0.0.7
@@ -303,6 +317,25 @@ input_number:
     initial: 24.21
     step: 0.01
     unit_of_measurement: c
+input_boolean:
+  zigbee_permit_join:
+    name: Allow devices to join
+    initial: off
+    icon: mdi:cellphone-wireless
+input_select:
+  zigbee2mqtt_log_level:
+    name: Zigbee2mqtt Log Level
+    options:
+     - debug
+     - info
+     - warn
+     - error
+    initial: info
+    icon: mdi:format-list-bulleted
+timer:
+  zigbee_permit_join:
+    name: Time remaining
+    duration: 120
 
 utility_meter:
   energy:
@@ -312,13 +345,12 @@ utility_meter:
       - offpeak
       - shoulder
       - peak
-      - shoulder
 
 
-xiaomi_aqara:
-  discovery_retry: 5
-  gateways:
-    - key: !secret xiaomi_password
+#xiaomi_aqara:
+#  discovery_retry: 5
+#  gateways:
+#    - key: !secret xiaomi_password
 
 person:
 
@@ -362,3 +394,12 @@ binary_sensor:
   - platform: workday
     country: AU
     province: NSW
+
+plant:
+    basil:
+      sensors:
+        moisture: sensor.basil_moisture
+        temperature: sensor.basil_temperature
+        conductivity: sensor.basil_conductivity
+        brightness: sensor.basil_light_intensity
+      min_moisture: 30

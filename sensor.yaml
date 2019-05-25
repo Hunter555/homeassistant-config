@@ -23,6 +23,11 @@
   #  unit_of_measurement: 'watts'
   #  value_template: '{{ value_json.params[0] }}'
   #  expire_after: 60
+
+  - platform: mqtt
+    name: Zigbee2mqtt Bridge state
+    state_topic: "zigbee2mqtt/bridge/state"
+    icon: mdi:router-wireless
   - platform: bom
     station: IDN60901.94759
     monitored_conditions:
@@ -64,11 +69,17 @@
     name: 'Power per minute'
     entity_id: sensor.power_meter
     sampling_size: 60
+  - platform: season
+    type: astronomical
+  - platform: miflora
+    mac: 'C4:7C:8D:67:13:2F'
+    name: basil
 
   - platform: mold_indicator
-    indoor_temp_sensor: sensor.temperature_158d0001e7b92f
-    indoor_humidity_sensor: sensor.humidity_158d0001e7b92f
-    outdoor_temp_sensor: sensor.temperature_158d0001e87d1f
+    name: mold_indicator_study
+    indoor_temp_sensor: sensor.0x00158d0001e7b92f_temperature
+    indoor_humidity_sensor: sensor.0x00158d0001e7b92f_humidity
+    outdoor_temp_sensor: sensor.0x00158d0001e87d1f_temperature
     calibration_factor: 2.375
 
   - platform: template
@@ -99,6 +110,14 @@
             {{ ((timerRemaining - now()|as_timestamp())/60)|round(1) }}
           {% else %}
             None
+          {% endif %}
+      display_alarm:
+        friendly_name: Kitchen Display Alarm
+        value_template: >
+          {% if (states('sensor.kitchen_display_alarm')) != 'unavailable' %}
+             {{states('sensor.kitchen_display_alarm')}}
+          {% else %}
+             None
           {% endif %}
 
   - platform: template
@@ -133,12 +152,14 @@
         unit_of_measurement: $
       is_winter_tariff:
         friendly_name: Winter Tariffs
-        value_template: "{{now().month >= 6 and now().month <= 8}}"
-        entity_id: sensor.date
+        value_template: "{{states('sensor.season') == 'winter'}}"
 
   - platform: template
     sensors:
       shower_on:
         friendly_name: 'Shower on'
-        value_template: '{{ ((states.sensor.humidity_158d000210aa65.state | float - states.sensor.humidity_158d0001e7b92f.state | float) > 27) or states.sensor.humidity_158d000210aa65.state | float > 95 }}'
+        entity_id: 
+          - sensor.0x00158d000210aa65_humidity
+          - sensor.0x00158d0001e87d1f_humidity
+        value_template: "{{ ((states.sensor['0x00158d000210aa65_humidity'].state | float - states.sensor['0x00158d0001e87d1f_humidity'].state | float) > 27) or states.sensor['0x00158d000210aa65_humidity'].state | float > 95 }}"
 

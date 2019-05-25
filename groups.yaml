@@ -44,6 +44,7 @@ Lights:
     - light.bedroom
     - light.gym
     - light.pantry
+    - light.deck
 
 Scenes:
   - scene.livingroom_dim
@@ -54,17 +55,17 @@ Weather:
   - sensor.weather_summary
   - sensor.bom_feels_like_c
   - sensor.bom_air_temp_c
-  - sensor.temperature_158d0001e87d1f
-  - sensor.humidity_158d0001e87d1f
+  - sensor.0x00158d0001e87d1f_temperature
+  - sensor.0x00158d0001e87d1f_humidity
 
 Entry:
-  - binary_sensor.door_window_sensor_158d0001f38110
+  - binary_sensor.0x00158d0001f38110_contact
   - light.Entry
 
 Lounge Room:
   - light.Lounge
   - light.Dining_Table
-  - binary_sensor.water_leak_sensor_158d0002115f31
+  - binary_sensor.0x00158d0002115f31_water_leak
   - media_player.TV
   - media_player.living_room_tv
   - sensor.sonarr_upcoming
@@ -78,18 +79,17 @@ Gym:
 Study:
   - light.Study
   - switch.my_pc
-  - sensor.temperature_158d0001e7b92f
-  - sensor.humidity_158d0001e7b92f
+  - sensor.0x00158d0001e7b92f_temperature
+  - sensor.0x00158d0001e7b92f_humidity
   - media_player.Tunes
 
 Bathroom:
-  - binary_sensor.door_window_sensor_158d0001b77bc5
-  - sensor.humidity_158d000210aa65
+  - binary_sensor.0x00158d0001b77bc5_contact
+  - sensor.0x00158d000210aa65_humidity
 
 Pantry:
-  - binary_sensor.door_window_sensor_158d0001b77bc5
-  - binary_sensor.door_window_sensor_158d0001b1b1ba
-  - light.gateway_light_7811dcb20b46
+  - binary_sensor.0x00158d0001b1b1ba_contact
+  - light.pantry
 
 Family:
     - person.hunter
@@ -99,8 +99,8 @@ Coffee Machine:
   - switch.Silvia
 
 Leak sensors:
-  - binary_sensor.water_leak_sensor_158d0002337473
-  - binary_sensor.water_leak_sensor_158d000233865a
+  - binary_sensor.0x00158d0002337473_water_leak
+  - binary_sensor.0x00158d000233865a_water_leak
 
 Speedtest:
   - sensor.speedtest_download

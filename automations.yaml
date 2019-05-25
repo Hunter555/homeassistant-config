@@ -128,13 +128,14 @@
   - data:
       entity_id: light.lounge
     service: light.turn_on
-- action:
-  - data:
-      entity_id: scene.alarm
-    service: scene.turn_on
+- id: '1520409505164'
   alias: Weekend Alarm
+  trigger:
+  - platform: template
+    value_template: '{{ states(''sensor.time'') == (states.input_datetime.weekend_wakeup_time.attributes.timestamp
+      | int | timestamp_custom(''%H:%M'', False)) }}'
   condition:
-    condition: and
+  - condition: and
     conditions:
     - condition: state
       entity_id: person.hunter
@@ -143,11 +144,12 @@
       weekday:
       - sat
       - sun
-  id: '1520409505164'
-  trigger:
-    platform: template
-    value_template: '{{ states(''sensor.time'') == (states.input_datetime.weekend_wakeup_time.attributes.timestamp
-      | int | timestamp_custom(''%H:%M'', False)) }}'
+  action:
+  - data:
+      entity_id: scene.alarm
+    service: scene.turn_on
+  - data: {}
+    service: script.delayed_alarm
 - action:
   - data:
       entity_id: switch.gym_speakers
@@ -187,11 +189,19 @@
   condition: []
   action:
   - data:
-      message: Water leak detected near aquarium!
+      message: Water leak detected near aquarium!,
+      target: [
+        !secret nikki_pushbullet,
+        !secret hunter_pushbullet
+      ]
     service: notify.pushbullet
 - action:
   - data:
-      message: Garage door opened
+      message: Garage door opened,
+      target: [
+        !secret nikki_pushbullet,
+        !secret hunter_pushbullet
+      ]
     service: notify.pushbullet
   alias: Garage Door Alarm
   condition:
@@ -213,23 +223,20 @@
 - id: '1525093789395'
   alias: Turn on the pantry light
   trigger:
-  - entity_id: binary_sensor.door_window_sensor_158d0001b1b1ba
+  - entity_id: binary_sensor.0x00158d0001b1b1ba_contact
+    from: 'off'
     platform: state
     to: 'on'
-  condition:
-  - after: sunset
-    after_offset: -02:00:00
-    condition: sun
+  condition: []
   action:
   - data:
       entity_id:
-      - light.gateway_light_7811dcb20b46
       - light.pantry
     service: light.turn_on
 - id: '1525094152925'
   alias: Turn off the pantry light
   trigger:
-  - entity_id: binary_sensor.door_window_sensor_158d0001b1b1ba
+  - entity_id: binary_sensor.0x00158d0001b1b1ba_contact
     platform: state
     to: 'off'
   condition: []
@@ -240,61 +247,62 @@
       - light.pantry
     service: light.turn_off
 - id: '1525094445197'
-  alias: Long press bedside button
+  alias: Press bedside button
   trigger:
-  - entity_id: binary_sensor.switch_158d0001f40663
-    platform: state
-    to: hold
-  condition: []
+    topic: zigbee2mqtt/0x00158d0001f40663
+    platform: mqtt
+  condition:
+    condition: template
+    value_template: '{{ "single" == trigger.payload_json.click }}'
   action:
   - data:
       entity_id: all
     service: light.turn_off
-- action:
-  - data:
-      entity_id: switch.plug_158d00020f3b00
-    service: switch.turn_on
+- id: '1525682046813'
   alias: Turn on the bathroom fan
-  condition:
-  - condition: state
-    entity_id: binary_sensor.door_window_sensor_158d0001b77bc5
-    state: 'off'
-  id: '1525682046813'
   trigger:
   - entity_id: sensor.shower_on
     platform: state
     to: 'True'
-- action:
+  condition:
+  - condition: state
+    entity_id: binary_sensor.0x00158d0001b77bc5_contact
+    state: 'off'
+  action:
   - data:
-      entity_id: switch.plug_158d00020f3b00
-    service: switch.turn_off
+      entity_id: switch.0x00158d00020f3b00_switch
+    service: switch.turn_on
+- id: '1525682254042'
   alias: Turn off the bathroom fan
-  condition: []
-  id: '1525682254042'
   trigger:
   - entity_id: sensor.shower_on
     platform: state
     to: 'False'
-  - entity_id: binary_sensor.door_window_sensor_158d0001b77bc5
+  - entity_id: binary_sensor.0x00158d0001b77bc5_contact
     from: 'off'
     platform: state
     to: 'on'
-- action:
+  condition: []
+  action:
   - data:
-      entity_id: switch.plug_158d00020f3b00
-    service: switch.turn_on
+      entity_id: switch.0x00158d00020f3b00_switch
+    service: switch.turn_off
+- id: '1525686734650'
   alias: Turn on the bathroom fan with the door
-  condition:
-  - condition: state
-    entity_id: sensor.shower_on
-    state: 'True'
-  id: '1525686734650'
   trigger:
-  - entity_id: binary_sensor.door_window_sensor_158d0001b77bc5
+  - entity_id: binary_sensor.0x00158d0001b77bc5_contact
     for:
       seconds: 6
     platform: state
     to: 'off'
+  condition:
+  - condition: state
+    entity_id: sensor.shower_on
+    state: 'True'
+  action:
+  - data:
+      entity_id: switch.0x00158d00020f3b00_switch
+    service: switch.turn_on
 - action:
   - service: light.turn_off
   alias: Turn off lights
@@ -324,6 +332,15 @@
   - data:
       entity_id: scene.Alarm
     service: scene.turn_on
+  - alias: ''
+    data:
+      brightness_pct: 5
+      color_temp: 1
+      entity_id: light.bedroom
+    service: light.turn_on
+  - alias: ''
+    data: {}
+    service: script.delayed_alarm
 - id: '1544439026982'
   alias: Set Initial States
   trigger:
@@ -337,17 +354,17 @@
   alias: Turn on the lights when we arrive at night
   trigger:
   - entity_id: person.hunter
-    event: enter
-    platform: zone
-    zone: zone.home
-  - entity_id: binary_sensor.door_window_sensor_158d0001f38110
+    from: not_home
+    platform: state
+    to: home
+  - entity_id: binary_sensor.0x00158d0001f38110_contact
     from: 'off'
     platform: state
     to: 'on'
   - entity_id: person.nikki
-    event: enter
-    platform: zone
-    zone: zone.home
+    from: not_home
+    platform: state
+    to: home
   condition:
   - condition: or
     conditions:
@@ -358,20 +375,14 @@
       before_offset: '1:00:00'
       condition: sun
   action:
-  - data:
-      message: Welcome home
-    service: notify.pushbullet
   - alias: ''
     entity_id: light.entry
     service: light.turn_on
+  - service: script.delayed_entry_off
 - id: '1554985557227'
-  alias: Weekday Tariff Change
+  alias: Weekday Peak NonWinter Tariff Set
   trigger:
-  - at: '6:59'
-    platform: time
   - at: '13:59'
-    platform: time
-  - at: '19:59'
     platform: time
   condition:
   - condition: time
@@ -384,58 +395,47 @@
   action:
   - data:
       entity_id: utility_meter.energy
-    service: utility_meter.next_tariff
-- id: '1554985905896'
-  alias: Weekend Tariff Shoulder
+      tariff: peak
+    service: utility_meter.select_tariff
+- id: '1554985959342'
+  alias: Weekday Shoulder NonWinter Tariff Set
   trigger:
-  - at: 07:00
+  - at: '20:00'
     platform: time
   condition:
   - condition: time
     weekday:
-    - sat
-    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
   action:
   - data:
       entity_id: utility_meter.energy
       tariff: shoulder
-    service: utility_meter.select_tariff
-- id: '1554985959342'
-  alias: Weekend Tariff Peak
-  trigger:
-  - at: '22:00'
-    platform: time
-  condition:
-  - condition: time
-    weekday:
-    - sat
-    - sun
-  action:
-  - data:
-      entity_id: utility_meter.energy
-      tariff: offpeak
     service: utility_meter.select_tariff
 - id: '1555116275673'
   alias: Kitchen timer notification
   trigger:
   - below: '1'
     entity_id: sensor.display_timer_remaining
-    for: '45'
+    for: '30'
     platform: numeric_state
   condition: []
   action:
   - data:
-      message: The kitchen display timer is ready
+      message: The kitchen display timer is ready,
+      target: [
+        !secret nikki_pushbullet,
+        !secret hunter_pushbullet
+      ]
     service: notify.pushbullet
 - id: '1555116490673'
-  alias: Weekday Winter Tariff Change
+  alias: Weekday Peak Winter Tariff Set
   initial_state: 'false'
   trigger:
-  - at: '6:59'
-    platform: time
   - at: '16:59'
-    platform: time
-  - at: '20:59'
     platform: time
   condition:
   - condition: time
@@ -448,23 +448,193 @@
   action:
   - data:
       entity_id: utility_meter.energy
-    service: utility_meter.next_tariff
+      tariff: peak
+    service: utility_meter.select_tariff
 - id: '1555121570851'
   alias: Transition Winter Tariffs
   trigger:
-  - entity_id: sensor.is_winter_tariff
-    from: 'false'
+  - entity_id: sensor.season
+    from: autumn
     platform: state
-    to: 'true'
-  - entity_id: sensor.is_winter_tariff
-    from: 'true'
+    to: winter
+  - entity_id: sensor.season
+    from: winter
     platform: state
-    to: 'false'
+    to: autumn
   condition: []
   action:
   - data:
-      entity_id: automation.weekday_tariff_change
+      entity_id: automation.Weekday_Peak_NonWinter_Tariff_Set
     service: automation.toggle
   - data:
-      entity_id: automation.weekday_winter_tariff_change
+      entity_id: automation.Weekday_Peak_Winter_Tariff_Set
     service: automation.toggle
+  - data:
+      entity_id: automation.Weekday_Shoulder_NonWinter_Tariff_Set
+    service: automation.toggle
+  - data:
+      entity_id: automation.Weekday_Shoulder_Winter_Tariff_Set
+    service: automation.toggle
+- id: '1555549536072'
+  alias: Power Usage Alarm
+  trigger:
+  - above: '10'
+    entity_id: sensor.power_meter
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      message: Power usage above 10 kW,
+      target: [
+        !secret nikki_pushbullet,
+        !secret hunter_pushbullet
+      ]
+    service: notify.pushbullet
+- id: '1556932609086'
+  alias: Daily Tariff Offpeak Set
+  trigger:
+  - at: '22:00'
+    platform: time
+  condition: []
+  action:
+  - data:
+      entity_id: utility_meter.energy
+      tariff: offpeak
+    service: utility_meter.select_tariff
+- id: '1556936991072'
+  alias: Daily Shoulder Tariff Set
+  trigger:
+  - at: 07:00
+    platform: time
+  condition: []
+  action:
+  - data:
+      entity_id: utility_meter.energy
+      tariff: shoulder
+    service: utility_meter.select_tariff
+- id: '1556937862250'
+  alias: Weekday Shoulder Winter Tariff Set
+  trigger:
+  - at: '21:00'
+    platform: time
+  condition:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      entity_id: utility_meter.energy
+      tariff: shoulder
+    service: utility_meter.select_tariff
+- id: '1558438822399'
+  alias: Water Alarm - Laundry
+  trigger:
+  - entity_id: binary_sensor.0x00158d0002337473_water_leak
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      message: Leak detected in the laundry!,
+      target: [
+        !secret nikki_pushbullet,
+        !secret hunter_pushbullet
+      ]
+    service: notify.pushbullet
+- id: '1558438953950'
+  alias: Water Alarm - Guest Bathroom
+  trigger:
+  - entity_id: binary_sensor.0x00158d000233865a_water_leak
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      message: Leak detected in the guest bathroom!,
+      target: [
+        !secret nikki_pushbullet,
+        !secret hunter_pushbullet
+      ]
+    service: notify.pushbullet
+- id: '1558516249730'
+  alias: Enable Zigbee joining
+  hide_entity: true
+  trigger:
+  - entity_id: input_boolean.zigbee_permit_join
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/bridge/config/permit_join
+      payload: 'true'
+  - service: timer.start
+    data:
+      entity_id: timer.zigbee_permit_join
+- id: disable_zigbee_join
+  alias: Disable Zigbee joining
+  hide_entity: true
+  trigger:
+  - entity_id: input_boolean.zigbee_permit_join
+    platform: state
+    to: 'off'
+  action:
+  - data:
+      payload: 'false'
+      topic: zigbee2mqtt/bridge/config/permit_join
+    service: mqtt.publish
+  - data:
+      entity_id: timer.zigbee_permit_join
+    service: timer.cancel
+- id: disable_zigbee_join_timer
+  alias: Disable Zigbee joining by timer
+  hide_entity: true
+  trigger:
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.zigbee_permit_join
+  action:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/bridge/config/permit_join
+      payload: 'false'
+  - service: input_boolean.turn_off
+    data:
+      entity_id: input_boolean.zigbee_permit_join
+- alias: Zigbee2mqtt Log Level
+  initial_state: 'on'
+  trigger:
+  - platform: state
+    entity_id: input_select.zigbee2mqtt_log_level
+    to: debug
+  - platform: state
+    entity_id: input_select.zigbee2mqtt_log_level
+    to: warn
+  - platform: state
+    entity_id: input_select.zigbee2mqtt_log_level
+    to: error
+  - platform: state
+    entity_id: input_select.zigbee2mqtt_log_level
+    to: info
+  action:
+  - service: mqtt.publish
+    data:
+      payload_template: '{{ states(''input_select.zigbee2mqtt_log_level'') }}'
+      topic: zigbee2mqtt/bridge/config/log_level
+  id: 8e75a073763c4e26a1fce569505a812b
+- id: '1558569759493'
+  alias: Sunrise
+  trigger:
+  - event: sunrise
+    platform: sun
+  condition: []
+  action:
+  - delay: '1'

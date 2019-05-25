@@ -32,8 +32,9 @@ views:
           - sensor.weather_precip_probability
           - sensor.bom_feels_like_c
           - sensor.bom_air_temp_c
-          - sensor.temperature_158d0001e87d1f
-          - sensor.humidity_158d0001e87d1f
+          - sensor.0x00158d0001e87d1f_temperature
+          - sensor.0x00158d0001e87d1f_humidity
+          - sensor.season
         card:
           type: glance
         title: Current Conditions
@@ -61,9 +62,9 @@ views:
 
           - type: history-graph
             entities:
-            - entity: sensor.temperature_158d0001e87d1f
+            - entity: sensor.0x00158d0001e87d1f_temperature
               name: Outdoor Temp
-            - entity: sensor.temperature_158d0001e7b92f
+            - entity: sensor.0x00158d0001e7b92f_temperature
               name: Study Temp
       - type: picture-glance
         id: gym
@@ -80,7 +81,7 @@ views:
         image: /local/images/lounge3.jpg
         entities:
           - light.lounge
-          - binary_sensor.water_leak_sensor_158d0002115f31
+          - binary_sensor.0x00158d0002115f31_water_leak
       - type: picture-entity
         id: dining
         title: Dining table
@@ -92,7 +93,7 @@ views:
         id: entry
         title: Entrance
         entities:
-          - binary_sensor.door_window_sensor_158d0001f38110
+          - binary_sensor.0x00158d0001f38110_contact
           - light.entry
         camera_image: camera.entry_cam
       - type: picture-glance
@@ -101,9 +102,9 @@ views:
         image: /local/images/bathroom.jpg
         entities:
           - sensor.shower_on
-          - binary_sensor.door_window_sensor_158d0001b77bc5
-          - sensor.humidity_158d000210aa65
-          - switch.plug_158d00020f3b00
+          - binary_sensor.0x00158d0001b77bc5_contact
+          - sensor.0x00158d000210aa65_humidity
+          - switch.0x00158d00020f3b00_switch
       - type: picture-entity
         id: garage
         title: Garage
@@ -132,6 +133,112 @@ views:
         image: /local/images/bedroom.jpg
         entity: light.bedroom
 
+  - icon: mdi:floor-plan
+    id: floorplan_page
+    panel: true
+    cards:
+        - type: picture-elements
+          image: /local/images/floorplan2.png
+          style: "width: 100%"
+          elements:  
+            - type: state-badge
+              entity: sensor.0x00158d0001e87d1f_temperature # outdoor
+              style:
+                top: 14%
+                left: 10%
+            - type: state-badge
+              entity: sensor.0x00158d0001e87d1f_humidity # outdoor
+              style:
+                top: 14%
+                left: 29%
+            - type: state-icon
+              entity: sensor.garage_door_status
+              style:
+                top: 93%
+                left: 15%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: light.bedroom
+              style:
+                top: 48%
+                left: 39%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: switch.0x00158d00020f3b00_switch # bathroom fan
+              style:
+                top: 88%
+                left: 55%
+            - type: state-icon
+              entity: binary_sensor.0x00158d0001b77bc5_contact # bathroom door
+              style:
+                top: 70%
+                left: 45%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: light.study
+              style:
+                top: 51%
+                left: 55%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: switch.my_pc
+              style:
+                top: 38%
+                left: 50%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: light.pantry
+              style:
+                top: 82%
+                left: 60%
+            - type: state-icon
+              entity: binary_sensor.0x00158d0001b1b1ba_contact # pantry door
+              style:
+                top: 70%
+                left: 58%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: light.dining_table
+              style:
+                top: 51%
+                left: 66%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: light.deck
+              style:
+                top: 25%
+                left: 75%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: light.lounge
+              style:
+                top: 55%
+                left: 80%
+            - type: state-icon
+              entity: media_player.living_room_tv
+              style:
+                top: 67%
+                left: 80%
+            - type: state-icon
+              tap_action:
+                action: toggle
+              entity: light.entry
+              style:
+                top: 86%
+                left: 68%
+            - type: state-icon
+              entity: binary_sensor.0x00158d0001f38110_contact # entry
+              style:
+                top: 94%
+                left: 68%
   - icon: mdi:lightbulb
     id: all_lights_page
     cards:
@@ -153,28 +260,11 @@ views:
         entity: light.gym
       - type: light
         entity: light.pantry
+      - type: light
+        entity: light.deck
       - type: glance
         entities:
           - switch.flux
-
-  - icon: mdi:cast
-    id: media_page
-    cards:
-      - type: media-control
-        entity: media_player.living_room_tv
-      - type: media-control
-        entity: media_player.tunes
-      - type: media-control
-        entity: media_player.kitchen_display
-#      - type: media-control
-#        entity: media_player.kitchen_home
-      - type: media-control
-        entity: media_player.chromecastaudio4835
-      - type: media-control
-        entity: media_player.googlehome0402
-      - type: media-control
-        entity: media_player.office_home
-
   - title: Sensors
     id: sensors_page
     cards:
@@ -229,7 +319,7 @@ views:
       - type: gauge
         id: mold_gauge
         title: Mold Risk
-        entity: sensor.mold_indicator
+        entity: sensor.mold_indicator_study
         severity:
           green: 0
           yellow: 70
@@ -238,44 +328,57 @@ views:
         title: Temperature Sensors
         id: all_temp_sensors
         entities:
-          - sensor.temperature_158d0001e7b92f
-          - sensor.temperature_158d0001e87d1f
-          - sensor.temperature_158d000210aa65
+          - sensor.0x00158d0001e7b92f_temperature
+          - sensor.0x00158d000210aa65_temperature
+          - sensor.0x00158d0001e87d1f_temperature
       - type: glance
         title: Humidity Sensors
         id: all_humidity_sensors
         entities:
-          - sensor.humidity_158d0001e7b92f
-          - sensor.humidity_158d0001e87d1f
-          - sensor.humidity_158d000210aa65
+          - sensor.0x00158d0001e7b92f_humidity
+          - sensor.0x00158d000210aa65_humidity
+          - sensor.0x00158d0001e87d1f_humidity
       - type: glance
         title: Leak Sensors
         id: all_leak_sensors
         entities:
-          - binary_sensor.water_leak_sensor_158d0002115f31
-          - binary_sensor.water_leak_sensor_158d0002337473
-          - binary_sensor.water_leak_sensor_158d000233865a
+          - binary_sensor.0x00158d0002115f31_water_leak
+          - binary_sensor.0x00158d0002337473_water_leak
+          - binary_sensor.0x00158d000233865a_water_leak
       - type: glance
         title: Doors
         id: all_door_sensors
         entities:
-          - binary_sensor.door_window_sensor_158d0001b1b1ba
-          - binary_sensor.door_window_sensor_158d0001b77bc5
-          - binary_sensor.door_window_sensor_158d0001f38110
+          - binary_sensor.0x00158d0001b1b1ba_contact
+          - binary_sensor.0x00158d0001f38110_contact
+          - binary_sensor.0x00158d0001b77bc5_contact
       - type: glance
         id: other_sensors
         title: Other Sensors
         entities:
           - sensor.time
-          - binary_sensor.switch_158d0001f40663
+          - sensor.0x00158d0001f40663_click
           - sensor.garage_door_status
           - sensor.garage_door_time_in_state
           - sensor.garage_door_wifi_signal_strength
-          - sensor.illumination_7811dcb20b46
           - sensor.shower_on
           - sensor.ssl_certificate_expiry
+      - type: glance
+        id: battery_sensors
+        title: Sensor Batteries
+        entities:
+          - sensor.0x00158d0001b1b1ba_battery
+          - sensor.0x00158d0001b77bc5_battery
+          - sensor.0x00158d0001e7b92f_battery
+          - sensor.0x00158d0001e87d1f_battery
+          - sensor.0x00158d0001f38110_battery
+          - sensor.0x00158d0001f40663_battery
+          - sensor.0x00158d000210aa65_battery
+          - sensor.0x00158d0002115f31_battery
+          - sensor.0x00158d0002337473_battery
+          - sensor.0x00158d000233865a_battery
     # Specify a tab icon if you want the view tab to be an icon.
-  - title: Power
+  - icon: mdi:power-socket-au
     id: power_page
     cards:
       - type: history-graph
@@ -303,6 +406,93 @@ views:
           - sensor.daily_shoulder_cost
           - sensor.daily_supply_cost
           - sensor.daily_total_cost
+      # Weekend Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 21:59
+      # Weekday Winter Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 16:59 | Peak 17:00 - 20:59 | Shoulder 21:00 - 22:00
+      # Weekday Non-Winteer Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 13:59 | Peak 14:00 - 19:59 | Shoulder 20:00 - 22:00
+      - type: vertical-stack
+        cards:
+          - type: conditional
+            conditions:
+              - entity: sensor.season
+                state_not: "winter"
+            card:
+              type: picture-elements
+              title: Weekday Tariff Times
+              image: /local/images/power/weekdaynonwintertariffs.png
+              elements:
+                - type: state-label
+                  entity: sensor.energy_offpeak
+                  prefix: "10pm - 7am "
+                  style:
+                    left: 22%
+                    top: 42%
+                - type: state-label
+                  entity: sensor.energy_peak
+                  prefix: "2pm - 8pm "
+                  style:
+                    left: 72%
+                    top: 42%
+                - type: state-label
+                  entity: sensor.energy_shoulder
+                  prefix: "7am - 2pm "
+                  style:
+                    left: 72%
+                    top: 58%
+                - type: state-label
+                  entity: sensor.energy_shoulder
+                  prefix: "8pm - 10pm "
+                  style:
+                    left: 38%
+                    top: 84%
+          - type: conditional
+            conditions:
+              - entity: sensor.season
+                state: "winter"
+            card:
+              type: picture-elements
+              title: Weekday Tariff Times (Winter)
+              image: /local/images/power/weekdaywintertariffs.png
+              elements:
+                - type: state-label
+                  entity: sensor.energy_offpeak
+                  prefix: "10pm - 7am "
+                  style:
+                    left: 22%
+                    top: 42%
+                - type: state-label
+                  entity: sensor.energy_peak
+                  prefix: "5pm - 9pm "
+                  style:
+                    left: 69%
+                    top: 23%
+                - type: state-label
+                  entity: sensor.energy_shoulder
+                  prefix: "7am - 5pm "
+                  style:
+                    left: 72%
+                    top: 58%
+                - type: state-label
+                  entity: sensor.energy_shoulder
+                  prefix: "9pm - 10pm "
+                  style:
+                    left: 38%
+                    top: 84%
+          - type: picture-elements
+            title: Weekend Tariff Times
+            image: /local/images/power/weekendtariffs.png
+            elements:
+                - type: state-label
+                  entity: sensor.energy_offpeak
+                  prefix: "10pm - 7am "
+                  style:
+                    left: 22%
+                    top: 42%
+                - type: state-label
+                  entity: sensor.energy_shoulder
+                  prefix: "7am - 10pm "
+                  style:
+                    left: 72%
+                    top: 58%
       - type: glance
         id: power_tariffs_rates
         title: Current Tariffs
@@ -332,7 +522,14 @@ views:
         entities:
           - sensor.display_timer_local
           - sensor.display_timer_remaining
-          - sensor.kitchen_display_alarm
+          - sensor.display_alarm
+      - type: glance
+        id: zigbee
+        title: Zigbee
+        entities:
+          - sensor.zigbee2mqtt_bridge_state
+          - input_boolean.zigbee_permit_join
+          - input_select.zigbee2mqtt_log_level
       - type: glance
         id: automations
         # Title of the entities card
@@ -342,3 +539,61 @@ views:
         entities:
           - group.all_automations
           - automation.turn_off_things_i_left_on
+          - automation.certificate_expiry_warning
+          - automation.coffee_weekday_warmup
+          - automation.dim_the_lights_when_we_watch_plex
+          - automation.garage_door_alarm
+          - automation.kitchen_timer_notification
+          - automation.left_music_on
+          - automation.press_bedside_button
+          - automation.notify_of_rain
+          - automation.set_initial_states
+          - automation.turn_off_lights
+          - automation.turn_off_the_bathroom_fan
+          - automation.turn_off_the_gym_speaker_when_no_longer_listening
+          - automation.turn_off_the_pantry_light
+          - automation.turn_on_gym_speakers_with_chromecast
+          - automation.turn_on_the_bathroom_fan
+          - automation.turn_on_the_bathroom_fan_with_the_door
+          - automation.turn_on_the_lights_when_we_arrive_at_night
+          - automation.turn_on_the_lights_with_the_tv
+          - automation.turn_on_the_pantry_light
+          - automation.water_alarm
+          - automation.weekday_alarm
+          - automation.weekend_alarm
+      - type: glance
+        id: automations-power
+        # Title of the entities card
+        title: Power Automations
+        # The entities here will be shown in the same order as specified.
+        # Each entry is an entity ID or a map with extra options.
+        entities:
+          - automation.daily_shoulder_tariff_set
+          - automation.daily_tariff_offpeak_set
+          - automation.power_usage_alarm
+          - automation.transition_winter_tariffs
+          - automation.weekday_peak_nonwinter_tariff_set
+          - automation.weekday_peak_winter_tariff_set
+          - automation.weekday_shoulder_nonwinter_tariff_set
+          - automation.weekday_shoulder_winter_tariff_set
+  - icon: mdi:leaf
+    id: plants_page
+    cards:
+      - type: plant-status
+        name: Basil
+        entity: plant.basil
+  - icon: mdi:cast
+    id: media_page
+    cards:
+      - type: media-control
+        entity: media_player.living_room_tv
+      - type: media-control
+        entity: media_player.tunes
+      - type: media-control
+        entity: media_player.kitchen_display
+      - type: media-control
+        entity: media_player.chromecastaudio4835
+      - type: media-control
+        entity: media_player.googlehome0402
+      - type: media-control
+        entity: media_player.office_home

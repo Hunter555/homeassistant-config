@@ -21,16 +21,10 @@
   entities:
     light.bedroom:
       state: on
-      #transition: 10
-      brightness: 25
+    #  transition: 120
+      brightness_pct: 5
+      color_temp: 1
     switch.silvia:
       state: on
-    media_player.kitchen_home:
-      state: playing
-
-- name: PostAlarm
-  entities:
-    light.bedroom:
-      state: on
-      transition: 10
-      brightness: 255
+    #media_player.kitchen_home:
+    #  state: playing

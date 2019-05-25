@@ -36,6 +36,9 @@
       - number: 3
         type: rgbw
         name: Gym
+      - number: 4
+        type: rgbw
+        name: Deck
     - host: 10.0.0.25
       version: 6
       groups:

@@ -7,6 +7,8 @@ sensor.garage_door_time_in_state:
   icon: mdi:timer-sand
 sensor.garage_door_wifi_signal_strength:
   icon: mdi:wifi
+sensor.garage_door_status:
+  icon: mdi:garage
 switch.my_pc:
   icon: mdi:desktop-classic
 switch.gym_speakers:
@@ -28,7 +30,6 @@ sensor.temperature_158d0001e87d1f:
 sensor.humidity_158d0001e87d1f:
   friendly_name: Outside Humidity
   icon: mdi:water-percent
-
 binary_sensor.door_window_sensor_158d0001b77bc5:
   friendly_name: Bathroom door
   icon: mdi:door
@@ -57,7 +58,6 @@ person.hunter:
   entity_picture: https://www.gravatar.com/avatar/dd97ba89d5f6fc910c81071a0cf048f6.jpg?s=80&d=wavatar
 person.nikki:
   entity_picture: https://www.gravatar.com/avatar/87ac9ca0c90dd9df491a791282087052.jpg?s=80&d=wavatar
-
 utility_meter.energy:
   friendly_name: Current Tarrif
   icon: mdi:timelapse
@@ -69,7 +69,6 @@ sensor.energy_shoulder:
   friendly_name: Shoulder
 sensor.hourly_total_power:
   icon: mdi:power-socket-au
-
 sensor.daily_peak_cost:
   icon: mdi:currency-usd
 sensor.daily_offpeak_cost:
@@ -82,9 +81,11 @@ sensor.daily_total_cost:
   icon: mdi:currency-usd
 sensor.is_winter_tariff:
   icon: mdi:snowflake
-
-
 sensor.display_timer_local:
   icon: mdi:alarm
 sensor.display_timer_remaining:
   icon: mdi:alarm
+plant.basil:
+  friendly_name: Basil
+switch.0x00158d00020f3b00_switch:
+  icon: mdi:fan
