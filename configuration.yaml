@@ -57,9 +57,14 @@ googlehome:
   devices:
     - host: 10.0.0.16
       track_alarms: true
+      track_devices: false
       #device_types: 1
     - host: 10.0.0.12
+      track_alarms: true
+      track_devices: false
     - host: 10.0.0.13
+      track_alarms: true
+      track_devices: false
 
 cast:
 
@@ -126,17 +131,17 @@ conversation:
 
 # Enables support for tracking state changes over time.
 history:
-  exclude:
+  include:
     domains:
-      - automation
-      - weblink
-      - updater
+      - light
       - cover
-      - camera
-      - time
-      - sun
-      - device_tracker
-      - group
+      - switch
+      - sensor
+      - binary_sensor
+      - plant
+      - person
+      - media_player
+  exclude:
     entities:
       - sensor.last_boot
       - sensor.date
@@ -147,9 +152,40 @@ history:
       - sensor.time
       - sensor.illumination_7811dcb20b46
       - sensor.ssl_certificate_expiry
+      - sensor.weather_summary
+      - sensor.weather_precip_probability
+      - sensor.bom_feels_like_c
+      - sensor.bom_air_temp_c
+      - sensor.realtime_power
+      - sensor.power_per_minute_mean
+      - sensor.hourly_total_power
+      - sensor.energy_shoulder
+      - sensor.energy_peak
+      - sensor.energy_offpeak
+      - sensor.daily_supply_cost
+      - sensor.daily_shoulder_cost
+      - sensor.daily_peak_cost
+      - sensor.daily_offpeak_cost
+      - sensor.platform_1
+      - sensor.platform_2
+      - sensor.local_bus
+      - sensor.display_timer_remaining
+      - sensor.display_timer_local
+      - sensor.bp_normanhurst_p98
+      - sensor.bp_berowra_p98
+      - sensor.7_eleven_berowra_p98
+      - sensor.aquarium_monitor_last_update
+
 
 # View all events in a logbook
 logbook:
+  include:
+    domains:
+      - light
+      - cover
+      - switch
+      - sensor
+      - binary_sensor
   exclude:
     entities:
       - sensor.last_boot
@@ -161,15 +197,29 @@ logbook:
       - sensor.time
       - sensor.illumination_7811dcb20b46
       - sensor.ssl_certificate_expiry
-    domains:
-      - weblink
-      - updater
-      - cover
-      - camera
-      - time
-      - sun
-      - device_tracker
-      - group
+      - sensor.weather_summary
+      - sensor.weather_precip_probability
+      - sensor.bom_feels_like_c
+      - sensor.bom_air_temp_c
+      - sensor.realtime_power
+      - sensor.power_per_minute_mean
+      - sensor.hourly_total_power
+      - sensor.energy_shoulder
+      - sensor.energy_peak
+      - sensor.energy_offpeak
+      - sensor.daily_supply_cost
+      - sensor.daily_shoulder_cost
+      - sensor.daily_peak_cost
+      - sensor.daily_offpeak_cost
+      - sensor.platform_1
+      - sensor.platform_2
+      - sensor.local_bus
+      - sensor.display_timer_remaining
+      - sensor.display_timer_local
+      - sensor.bp_normanhurst_p98
+      - sensor.bp_berowra_p98
+      - sensor.7_eleven_berowra_p98
+      - sensor.aquarium_monitor_last_update
 
 # Track the sun
 sun:
@@ -182,7 +232,7 @@ automation: !include automations.yaml
 
 # Text to speech
 tts:
-  platform: google
+  platform: google_translate
 
 mqtt:
   broker: localhost
@@ -219,18 +269,18 @@ switch:
     name: Gym Speakers
     host: 10.0.0.8
     token: !secret bathroom_fan_token
-  - platform: flux
-    name: flux
-    lights:
-    - light.study
-    - light.dining_table
-    - light.lounge
-    - light.Bedroom
-    - light.Entry
-    - light.Hallway
+  #- platform: flux
+    #name: flux
+    #lights:
+    #- light.study
+    #- light.dining_table
+    #- light.lounge
+    #- light.Bedroom
+    #- light.Entry
+    #- light.Hallway
     #- light.Stairs
-    mode: mired
-    disable_brightness_adjust: True
+    #mode: mired
+    #disable_brightness_adjust: True
   - platform: wake_on_lan
     name: My PC
     mac_address: "AC:22:0B:26:15:08"

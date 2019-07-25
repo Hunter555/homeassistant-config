@@ -28,6 +28,23 @@
     name: Zigbee2mqtt Bridge state
     state_topic: "zigbee2mqtt/bridge/state"
     icon: mdi:router-wireless
+  - platform: mqtt
+    name: Aquarium Monitor Last Update
+    state_topic: "home/aquamon/status"
+    value_template: "{{ value_json.time }}"
+    icon: mdi:clock
+  - platform: mqtt
+    name: Aquarium Temperature
+    state_topic: "home/aquamon/status"
+    value_template: "{{ value_json.temperature }}"
+    unit_of_measurement: '°C'
+    icon: mdi:thermometer
+  - platform: mqtt
+    name: Aquarium Water Level
+    state_topic: "home/aquamon/status"
+    value_template: "{{ value_json.water_level }}"
+    unit_of_measurement: '%'
+    icon: mdi:waves
   - platform: bom
     station: IDN60901.94759
     monitored_conditions:
@@ -65,6 +82,15 @@
   - platform: nsw_fuel_station
     station_id: 1465
     fuel_types: ["P98"]
+
+
+  - platform: mqtt
+    name: power_meter
+    state_topic: "home/powermon/status"
+    value_template: "{{ value_json.power|float }}"
+    unit_of_measurement: 'kW'
+    icon: mdi:power-plug
+
   - platform: statistics
     name: 'Power per minute'
     entity_id: sensor.power_meter
@@ -74,6 +100,8 @@
   - platform: miflora
     mac: 'C4:7C:8D:67:13:2F'
     name: basil
+    force_update: false
+    scan_interval: 14400
 
   - platform: mold_indicator
     name: mold_indicator_study
@@ -81,6 +109,12 @@
     indoor_humidity_sensor: sensor.0x00158d0001e7b92f_humidity
     outdoor_temp_sensor: sensor.0x00158d0001e87d1f_temperature
     calibration_factor: 2.375
+  - platform: mold_indicator
+    name: mold_indicator_bathroom
+    indoor_temp_sensor: sensor.0x00158d000210aa65_temperature
+    indoor_humidity_sensor: sensor.0x00158d000210aa65_humidity
+    outdoor_temp_sensor: sensor.0x00158d0001e87d1f_temperature
+    calibration_factor: 3.96
 
   - platform: template
     sensors:
@@ -122,10 +156,10 @@
 
   - platform: template
     sensors:
-      hourly_total_power:
-        friendly_name: Hourly Total
-        value_template: "{{ state_attr('sensor.power_per_minute_mean', 'total')}}"
-        unit_of_measurement: kW 
+      daily_total_kw:
+        friendly_name: Daily Total
+        value_template: "{{(states('sensor.energy_peak')|float + states('sensor.energy_offpeak')|float + states('sensor.energy_shoulder')|float) |round(2)}}"
+        unit_of_measurement: kW
       realtime_power:
         friendly_name: Realtime Power
         value_template: "{{(state_attr('sensor.power_per_minute_mean', 'total') / 60)|round(2)}}"
@@ -153,6 +187,15 @@
       is_winter_tariff:
         friendly_name: Winter Tariffs
         value_template: "{{states('sensor.season') == 'winter'}}"
+
+  - platform: history_stats
+    name: Yesterdays Power
+    entity_id: sensor.daily_total_kw
+    state: 'on'
+    type: count   
+    end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    duration:
+      hours: 24
 
   - platform: template
     sensors:

@@ -89,3 +89,7 @@ plant.basil:
   friendly_name: Basil
 switch.0x00158d00020f3b00_switch:
   icon: mdi:fan
+sensor.daily_total_kw:
+  icon: mdi:counter
+sensor.power_meter:
+  friendly_name: Power Meter

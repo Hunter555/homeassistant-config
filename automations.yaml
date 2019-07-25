@@ -190,22 +190,20 @@
   action:
   - data:
       message: Water leak detected near aquarium!,
-      target: [
-        !secret nikki_pushbullet,
-        !secret hunter_pushbullet
-      ]
+      target:
+        - !secret nikki_pushbullet,
+        - !secret hunter_pushbullet
     service: notify.pushbullet
-- action:
-  - data:
-      message: Garage door opened,
-      target: [
-        !secret nikki_pushbullet,
-        !secret hunter_pushbullet
-      ]
-    service: notify.pushbullet
+- id: '1524401200558'
   alias: Garage Door Alarm
+  trigger:
+  - entity_id: cover.garage_door
+    for:
+      minutes: 2
+    platform: state
+    to: open
   condition:
-    condition: or
+  - condition: or
     conditions:
     - condition: state
       entity_id: person.hunter
@@ -213,21 +211,24 @@
     - condition: state
       entity_id: person.hunter
       state: work
-  id: '1524401200558'
-  trigger:
-  - entity_id: cover.garage_door
-    platform: state
-    to: open
-    for:
-      minutes: 2
+  action:
+  - data:
+      message: Garage door opened
+      target:
+        - !secret nikki_pushbullet,
+        - !secret hunter_pushbullet
+    service: notify.pushbullet
 - id: '1525093789395'
   alias: Turn on the pantry light
   trigger:
-  - entity_id: binary_sensor.0x00158d0001b1b1ba_contact
+  - entity_id: binary_sensor.pantry_door
     from: 'off'
     platform: state
     to: 'on'
-  condition: []
+  condition:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
   action:
   - data:
       entity_id:
@@ -236,7 +237,7 @@
 - id: '1525094152925'
   alias: Turn off the pantry light
   trigger:
-  - entity_id: binary_sensor.0x00158d0001b1b1ba_contact
+  - entity_id: binary_sensor.pantry_door
     platform: state
     to: 'off'
   condition: []
@@ -266,7 +267,7 @@
     to: 'True'
   condition:
   - condition: state
-    entity_id: binary_sensor.0x00158d0001b77bc5_contact
+    entity_id: binary_sensor.bathroom_door
     state: 'off'
   action:
   - data:
@@ -278,7 +279,7 @@
   - entity_id: sensor.shower_on
     platform: state
     to: 'False'
-  - entity_id: binary_sensor.0x00158d0001b77bc5_contact
+  - entity_id: binary_sensor.bathroom_door
     from: 'off'
     platform: state
     to: 'on'
@@ -290,7 +291,7 @@
 - id: '1525686734650'
   alias: Turn on the bathroom fan with the door
   trigger:
-  - entity_id: binary_sensor.0x00158d0001b77bc5_contact
+  - entity_id: binary_sensor.bathroom_door
     for:
       seconds: 6
     platform: state
@@ -303,15 +304,6 @@
   - data:
       entity_id: switch.0x00158d00020f3b00_switch
     service: switch.turn_on
-- action:
-  - service: light.turn_off
-  alias: Turn off lights
-  condition: []
-  id: '1525698358651'
-  trigger:
-  - entity_id: binary_sensor.switch_158d0001f40663
-    platform: state
-    to: 'on'
 - id: '1529573776011'
   alias: Weekday Alarm
   trigger:
@@ -354,7 +346,6 @@
   alias: Turn on the lights when we arrive at night
   trigger:
   - entity_id: person.hunter
-    from: not_home
     platform: state
     to: home
   - entity_id: binary_sensor.0x00158d0001f38110_contact
@@ -426,10 +417,9 @@
   action:
   - data:
       message: The kitchen display timer is ready,
-      target: [
-        !secret nikki_pushbullet,
-        !secret hunter_pushbullet
-      ]
+      target:
+        - !secret nikki_pushbullet,
+        - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1555116490673'
   alias: Weekday Peak Winter Tariff Set
@@ -485,10 +475,9 @@
   action:
   - data:
       message: Power usage above 10 kW,
-      target: [
-        !secret nikki_pushbullet,
-        !secret hunter_pushbullet
-      ]
+      target:
+        - !secret nikki_pushbullet,
+        - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1556932609086'
   alias: Daily Tariff Offpeak Set
@@ -541,10 +530,9 @@
   action:
   - data:
       message: Leak detected in the laundry!,
-      target: [
-        !secret nikki_pushbullet,
-        !secret hunter_pushbullet
-      ]
+      target:
+        - !secret nikki_pushbullet,
+        - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1558438953950'
   alias: Water Alarm - Guest Bathroom
@@ -557,10 +545,9 @@
   action:
   - data:
       message: Leak detected in the guest bathroom!,
-      target: [
-        !secret nikki_pushbullet,
-        !secret hunter_pushbullet
-      ]
+      target:
+        - !secret nikki_pushbullet,
+        - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1558516249730'
   alias: Enable Zigbee joining
@@ -638,3 +625,58 @@
   condition: []
   action:
   - delay: '1'
+- id: '1559638954100'
+  alias: Doorbell
+  trigger:
+  - platform: mqtt
+    topic: zigbee2mqtt/0x00158d0002afaf9d
+  condition:
+  - condition: or
+    conditions:
+    - condition: template
+      value_template: '{{ "single" == trigger.payload_json.click }}'
+    - condition: template
+      value_template: '{{ "hold" == trigger.payload_json.action }}'
+  action:
+  - data:
+      entity_id: media_player.all_speakers
+      volume_level: 0.8
+    service: media_player.volume_set
+  - data:
+      entity_id: media_player.all_speakers
+      media_content_id: !secret doorbell_file
+      media_content_type: music
+    service: media_player.play_media
+  - data:
+      message: Someone is at the door
+      target:
+        - !secret nikki_pushbullet,
+        - !secret hunter_pushbullet
+    service: notify.pushbullet
+  - data: {}
+    service: script.delayed_doorbell
+  - data: {}
+    service: script.doorbell_trigger
+  - data:
+      entity_id: media_player.living_room_tv
+    service: media_player.media_pause
+- id: '1562639972083'
+  alias: Aquarium Alerts
+  trigger:
+  - above: '28'
+    below: '22'
+    entity_id: sensor.aquarium_temperature
+    for: 0:05:00
+    platform: numeric_state
+  - above: '110'
+    below: '85'
+    entity_id: sensor.aquarium_water_level
+    for: 0:05:00
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      message: Check on the aquarium
+      target:
+        - !secret hunter_pushbullet
+    service: notify.pushbullet

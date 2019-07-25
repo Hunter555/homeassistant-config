@@ -1,7 +1,7 @@
 delayed_entry_off:
   alias: Delayed Entry Off
   sequence:
-  - delay: '60'
+  - delay: '180'
   - data:
       entity_id: light.entry
     service: light.turn_off
@@ -13,4 +13,20 @@ delayed_alarm:
       brightness_pct: 100
       entity_id: light.bedroom
       transition: 220
+    service: light.turn_on
+delayed_doorbell:
+  alias: Delayed Doorbell
+  sequence:
+  - delay: '15'
+  - data:
+      entity_id: media_player.all_speakers
+    service: media_player.turn_off
+doorbell_trigger:
+  alias: Doorbell Trigger
+  sequence:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  - data:
+      entity_id: light.entry
     service: light.turn_on

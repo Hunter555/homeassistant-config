@@ -28,6 +28,7 @@ views:
         entity: weather.dark_sky
       - type: entities
         id: weathercustom
+        show_header_toggle: false
         entities:
           - sensor.weather_precip_probability
           - sensor.bom_feels_like_c
@@ -102,7 +103,7 @@ views:
         image: /local/images/bathroom.jpg
         entities:
           - sensor.shower_on
-          - binary_sensor.0x00158d0001b77bc5_contact
+          - binary_sensor.bathroom_door
           - sensor.0x00158d000210aa65_humidity
           - switch.0x00158d00020f3b00_switch
       - type: picture-entity
@@ -171,7 +172,12 @@ views:
                 top: 88%
                 left: 55%
             - type: state-icon
-              entity: binary_sensor.0x00158d0001b77bc5_contact # bathroom door
+              entity: sensor.shower_on
+              style:
+                top: 74%
+                left: 54%
+            - type: state-icon
+              entity: binary_sensor.bathroom_door # bathroom door
               style:
                 top: 70%
                 left: 45%
@@ -197,7 +203,7 @@ views:
                 top: 82%
                 left: 60%
             - type: state-icon
-              entity: binary_sensor.0x00158d0001b1b1ba_contact # pantry door
+              entity: binary_sensor.pantry_door # pantry door
               style:
                 top: 70%
                 left: 58%
@@ -235,6 +241,13 @@ views:
                 top: 86%
                 left: 68%
             - type: state-icon
+              tap_action:
+                action: toggle
+              entity: switch.silvia
+              style:
+                top: 87%
+                left: 74%
+            - type: state-icon
               entity: binary_sensor.0x00158d0001f38110_contact # entry
               style:
                 top: 94%
@@ -262,9 +275,9 @@ views:
         entity: light.pantry
       - type: light
         entity: light.deck
-      - type: glance
-        entities:
-          - switch.flux
+      #- type: glance
+      #  entities:
+      #    - switch.flux
   - title: Sensors
     id: sensors_page
     cards:
@@ -324,6 +337,13 @@ views:
           green: 0
           yellow: 70
           red: 75
+      - type: gauge
+        id: mold_bathroom_gauge
+        entity: sensor.mold_indicator_bathroom
+        severity:
+          green: 0
+          yellow: 70
+          red: 75
       - type: glance
         title: Temperature Sensors
         id: all_temp_sensors
@@ -349,20 +369,27 @@ views:
         title: Doors
         id: all_door_sensors
         entities:
-          - binary_sensor.0x00158d0001b1b1ba_contact
+          - binary_sensor.pantry_door
           - binary_sensor.0x00158d0001f38110_contact
-          - binary_sensor.0x00158d0001b77bc5_contact
+          - binary_sensor.bathroom_door
       - type: glance
         id: other_sensors
         title: Other Sensors
         entities:
-          - sensor.time
           - sensor.0x00158d0001f40663_click
           - sensor.garage_door_status
           - sensor.garage_door_time_in_state
           - sensor.garage_door_wifi_signal_strength
           - sensor.shower_on
+          - sensor.doorbell
+      - type: glance
+        id: hass_info
+        title: Home Assistant
+        entities:
+          - sensor.time
+          - updater.updater
           - sensor.ssl_certificate_expiry
+          - sensor.zigbee2mqtt_bridge_state
       - type: glance
         id: battery_sensors
         title: Sensor Batteries
@@ -377,6 +404,7 @@ views:
           - sensor.0x00158d0002115f31_battery
           - sensor.0x00158d0002337473_battery
           - sensor.0x00158d000233865a_battery
+          - sensor.doorbell_battery
     # Specify a tab icon if you want the view tab to be an icon.
   - icon: mdi:power-socket-au
     id: power_page
@@ -396,7 +424,7 @@ views:
           - sensor.energy_peak
           - sensor.energy_offpeak
           - sensor.energy_shoulder
-          - sensor.hourly_total_power
+          - sensor.daily_total_kw
       - type: glance
         id: power_cost_glance
         title: Todays Costs
@@ -406,6 +434,18 @@ views:
           - sensor.daily_shoulder_cost
           - sensor.daily_supply_cost
           - sensor.daily_total_cost
+      - type: glance
+        id: power_tariffs_rates
+        title: Current Tariffs
+        entities:
+          - input_number.peak_tariff_rate
+          - input_number.offpeak_tariff_rate
+          - input_number.shoulder_tariff_rate
+      - type: glance
+        id: power_control_glance
+        entities:
+          - sensor.power_per_minute_mean
+          - sensor.is_winter_tariff
       # Weekend Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 21:59
       # Weekday Winter Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 16:59 | Peak 17:00 - 20:59 | Shoulder 21:00 - 22:00
       # Weekday Non-Winteer Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 13:59 | Peak 14:00 - 19:59 | Shoulder 20:00 - 22:00
@@ -493,19 +533,6 @@ views:
                   style:
                     left: 72%
                     top: 58%
-      - type: glance
-        id: power_tariffs_rates
-        title: Current Tariffs
-        entities:
-          - input_number.peak_tariff_rate
-          - input_number.offpeak_tariff_rate
-          - input_number.shoulder_tariff_rate
-      - type: glance
-        id: power_control_glance
-        entities:
-          - sensor.power_per_minute_mean
-          - sensor.uptime_sensor
-          - sensor.is_winter_tariff
   - title: Automations
     id: automations_page
     # Title of the view. Will be used as the tooltip for tab icon
@@ -548,7 +575,6 @@ views:
           - automation.press_bedside_button
           - automation.notify_of_rain
           - automation.set_initial_states
-          - automation.turn_off_lights
           - automation.turn_off_the_bathroom_fan
           - automation.turn_off_the_gym_speaker_when_no_longer_listening
           - automation.turn_off_the_pantry_light
@@ -576,6 +602,26 @@ views:
           - automation.weekday_peak_winter_tariff_set
           - automation.weekday_shoulder_nonwinter_tariff_set
           - automation.weekday_shoulder_winter_tariff_set
+  - icon: mdi:fish
+    id: aquarium_page
+    cards:
+      - type: glance
+        id: aquarium_status
+        title: Aquarium
+        entities:
+          - sensor.aquarium_monitor_last_update
+      - type: sensor
+        id: aquarium_temperature
+        title: Temperature
+        entity: sensor.aquarium_temperature
+        graph: line
+        detail: 1
+      - type: sensor
+        id: aquarium_water_level
+        title: Temperature
+        entity: sensor.aquarium_water_level
+        graph: line
+        detail: 1
   - icon: mdi:leaf
     id: plants_page
     cards:
