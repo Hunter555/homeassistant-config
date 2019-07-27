@@ -189,9 +189,9 @@
   condition: []
   action:
   - data:
-      message: Water leak detected near aquarium!,
+      message: Water leak detected near aquarium!
       target:
-        - !secret nikki_pushbullet,
+        - !secret nikki_pushbullet
         - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1524401200558'
@@ -215,7 +215,7 @@
   - data:
       message: Garage door opened
       target:
-        - !secret nikki_pushbullet,
+        - !secret nikki_pushbullet
         - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1525093789395'
@@ -250,7 +250,7 @@
 - id: '1525094445197'
   alias: Press bedside button
   trigger:
-    topic: zigbee2mqtt/0x00158d0001f40663
+    topic: zigbee2mqtt/bedside_button
     platform: mqtt
   condition:
     condition: template
@@ -416,9 +416,9 @@
   condition: []
   action:
   - data:
-      message: The kitchen display timer is ready,
+      message: The kitchen display timer is ready
       target:
-        - !secret nikki_pushbullet,
+        - !secret nikki_pushbullet
         - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1555116490673'
@@ -476,7 +476,7 @@
   - data:
       message: Power usage above 10 kW,
       target:
-        - !secret nikki_pushbullet,
+        - !secret nikki_pushbullet
         - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1556932609086'
@@ -529,9 +529,9 @@
   condition: []
   action:
   - data:
-      message: Leak detected in the laundry!,
+      message: Leak detected in the laundry!
       target:
-        - !secret nikki_pushbullet,
+        - !secret nikki_pushbullet
         - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1558438953950'
@@ -544,9 +544,9 @@
   condition: []
   action:
   - data:
-      message: Leak detected in the guest bathroom!,
+      message: Leak detected in the guest bathroom!
       target:
-        - !secret nikki_pushbullet,
+        - !secret nikki_pushbullet
         - !secret hunter_pushbullet
     service: notify.pushbullet
 - id: '1558516249730'
@@ -650,7 +650,7 @@
   - data:
       message: Someone is at the door
       target:
-        - !secret nikki_pushbullet,
+        - !secret nikki_pushbullet
         - !secret hunter_pushbullet
     service: notify.pushbullet
   - data: {}

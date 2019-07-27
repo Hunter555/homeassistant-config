@@ -159,7 +159,7 @@
       daily_total_kw:
         friendly_name: Daily Total
         value_template: "{{(states('sensor.energy_peak')|float + states('sensor.energy_offpeak')|float + states('sensor.energy_shoulder')|float) |round(2)}}"
-        unit_of_measurement: kW
+        unit_of_measurement: kWH
       realtime_power:
         friendly_name: Realtime Power
         value_template: "{{(state_attr('sensor.power_per_minute_mean', 'total') / 60)|round(2)}}"

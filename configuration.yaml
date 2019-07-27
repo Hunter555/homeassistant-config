@@ -159,9 +159,9 @@ history:
       - sensor.realtime_power
       - sensor.power_per_minute_mean
       - sensor.hourly_total_power
-      - sensor.energy_shoulder
-      - sensor.energy_peak
-      - sensor.energy_offpeak
+      #- sensor.energy_shoulder
+      #- sensor.energy_peak
+      #- sensor.energy_offpeak
       - sensor.daily_supply_cost
       - sensor.daily_shoulder_cost
       - sensor.daily_peak_cost
@@ -389,7 +389,7 @@ timer:
 
 utility_meter:
   energy:
-    source: sensor.realtime_power
+    source: sensor.power_meter
     cycle: daily
     tariffs:
       - offpeak
