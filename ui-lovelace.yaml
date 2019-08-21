@@ -39,6 +39,12 @@ views:
         card:
           type: glance
         title: Current Conditions
+      - type: picture-glance
+        id: bom-radar
+        title: Radar
+        entities:
+          - sensor.weather_precip_probability
+        camera_image: camera.bom_radar_loop_sydney
         # The filter card will filter entities for their state
       - id: peoplehome # Every card needs an ID, for it to be edited from the UI.
         type: entities
@@ -50,23 +56,23 @@ views:
         card:
           type: glance
           title: People
-      - type: vertical-stack
-        cards:
-          - type: picture-glance
-            id: study
-            title: Study
-            image: /local/images/office.jpg
-            entities:
-              - light.study
-              - switch.my_pc
-              - media_player.tunes
+      #- type: vertical-stack
+      #  cards:
+      #    - type: picture-glance
+      #      id: study
+      #      title: Study
+      #      image: /local/images/office.jpg
+      #      entities:
+      #        - light.study
+      #        - switch.my_pc
+      #        - media_player.tunes
 
-          - type: history-graph
-            entities:
-            - entity: sensor.0x00158d0001e87d1f_temperature
-              name: Outdoor Temp
-            - entity: sensor.0x00158d0001e7b92f_temperature
-              name: Study Temp
+      - type: history-graph
+        entities:
+        - entity: sensor.0x00158d0001e87d1f_temperature
+          name: Outdoor Temp
+        - entity: sensor.0x00158d0001e7b92f_temperature
+          name: Study Temp
       - type: picture-glance
         id: gym
         title: Gym
@@ -76,20 +82,20 @@ views:
           - light.gym
           - media_player.chromecastaudio4835
           - light.stairs
-      - type: picture-glance
-        id: loungeroom
-        title: Lounge Room
-        image: /local/images/lounge3.jpg
-        entities:
-          - light.lounge
-          - binary_sensor.0x00158d0002115f31_water_leak
-      - type: picture-entity
-        id: dining
-        title: Dining table
-        tap_action: 
-          action: toggle
-        image: /local/images/dining.jpg
-        entity: light.dining_table
+     # - type: picture-glance
+     #   id: loungeroom
+     #   title: Lounge Room
+     #   image: /local/images/lounge3.jpg
+     #   entities:
+     #     - light.lounge
+     #     - binary_sensor.0x00158d0002115f31_water_leak
+      #- type: picture-entity
+      #  id: dining
+      #  title: Dining table
+      #  tap_action: 
+      #    action: toggle
+      #  image: /local/images/dining.jpg
+      #  entity: light.dining_table
       - type: picture-glance
         id: entry
         title: Entrance
@@ -97,15 +103,15 @@ views:
           - binary_sensor.0x00158d0001f38110_contact
           - light.entry
         camera_image: camera.entry_cam
-      - type: picture-glance
-        id: bathroom
-        title: Bathroom
-        image: /local/images/bathroom.jpg
-        entities:
-          - sensor.shower_on
-          - binary_sensor.bathroom_door
-          - sensor.0x00158d000210aa65_humidity
-          - switch.0x00158d00020f3b00_switch
+      #- type: picture-glance
+      #  id: bathroom
+      #  title: Bathroom
+      #  image: /local/images/bathroom.jpg
+      #  entities:
+      #    - sensor.shower_on
+      #    - binary_sensor.bathroom_door
+      #    - sensor.0x00158d000210aa65_humidity
+      #    - switch.0x00158d00020f3b00_switch
       - type: picture-entity
         id: garage
         title: Garage
@@ -125,14 +131,20 @@ views:
         tap_action: 
           action: toggle
         hold_action: more-info
+      - type: glance
+        id: wakeup_times
+        title: Alarm
+        entities:
+          - input_datetime.weekday_wakeup_time
+          - input_datetime.weekend_wakeup_time
         # The picture entity card will represent an entity with a picture
-      - type: picture-entity
-        id: bedroom
-        title: Bedroom
-        tap_action: 
-          action: toggle
-        image: /local/images/bedroom.jpg
-        entity: light.bedroom
+      #- type: picture-entity
+      #  id: bedroom
+      #  title: Bedroom
+      #  tap_action: 
+      #    action: toggle
+      #  image: /local/images/bedroom.jpg
+      #  entity: light.bedroom
 
   - icon: mdi:floor-plan
     id: floorplan_page
@@ -278,7 +290,7 @@ views:
       #- type: glance
       #  entities:
       #    - switch.flux
-  - title: Sensors
+  - icon: mdi:chart-bell-curve
     id: sensors_page
     cards:
       - type: vertical-stack
@@ -387,9 +399,9 @@ views:
         title: Home Assistant
         entities:
           - sensor.time
-          - updater.updater
           - sensor.ssl_certificate_expiry
           - sensor.zigbee2mqtt_bridge_state
+          - sensor.db_size
       - type: glance
         id: battery_sensors
         title: Sensor Batteries
@@ -435,6 +447,12 @@ views:
           - sensor.daily_supply_cost
           - sensor.daily_total_cost
       - type: glance
+        id: power_history
+        title: History
+        entities:
+          - sensor.yesterdays_power
+          - sensor.two_days_ago_power
+      - type: glance
         id: power_tariffs_rates
         title: Current Tariffs
         entities:
@@ -446,6 +464,12 @@ views:
         entities:
           - sensor.power_per_minute_mean
           - sensor.is_winter_tariff
+      - type: sensor
+        name: Daily Historic Totals
+        id: history_power
+        hours_to_show: 80
+        graph: line
+        entity: sensor.yesterdays_power
       # Weekend Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 21:59
       # Weekday Winter Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 16:59 | Peak 17:00 - 20:59 | Shoulder 21:00 - 22:00
       # Weekday Non-Winteer Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 13:59 | Peak 14:00 - 19:59 | Shoulder 20:00 - 22:00
@@ -533,16 +557,30 @@ views:
                   style:
                     left: 72%
                     top: 58%
+  - icon: mdi:fish
+    id: aquarium_page
+    cards:
+      - type: glance
+        id: aquarium_status
+        title: Aquarium
+        entities:
+          - sensor.aquarium_monitor_last_update
+      - type: sensor
+        id: aquarium_temperature
+        title: Temperature
+        entity: sensor.aquarium_temperature
+        graph: line
+        detail: 1
+      - type: sensor
+        id: aquarium_water_level
+        title: Temperature
+        entity: sensor.aquarium_water_level
+        graph: line
+        detail: 1
   - title: Automations
     id: automations_page
     # Title of the view. Will be used as the tooltip for tab icon
     cards:
-      - type: glance
-        id: wakeup_times
-        title: Alarm
-        entities:
-          - input_datetime.weekday_wakeup_time
-          - input_datetime.weekend_wakeup_time
       - type: glance
         id: google_home_timers
         title: Google Timers/Alarms
@@ -602,26 +640,6 @@ views:
           - automation.weekday_peak_winter_tariff_set
           - automation.weekday_shoulder_nonwinter_tariff_set
           - automation.weekday_shoulder_winter_tariff_set
-  - icon: mdi:fish
-    id: aquarium_page
-    cards:
-      - type: glance
-        id: aquarium_status
-        title: Aquarium
-        entities:
-          - sensor.aquarium_monitor_last_update
-      - type: sensor
-        id: aquarium_temperature
-        title: Temperature
-        entity: sensor.aquarium_temperature
-        graph: line
-        detail: 1
-      - type: sensor
-        id: aquarium_water_level
-        title: Temperature
-        entity: sensor.aquarium_water_level
-        graph: line
-        detail: 1
   - icon: mdi:leaf
     id: plants_page
     cards:

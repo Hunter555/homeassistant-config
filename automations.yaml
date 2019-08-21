@@ -333,6 +333,10 @@
   - alias: ''
     data: {}
     service: script.delayed_alarm
+  - data:
+      entity_id: media_player.googlehome0402
+      volume_level: 0.2
+    service: media_player.volume_set
 - id: '1544439026982'
   alias: Set Initial States
   trigger:
@@ -680,3 +684,62 @@
       target:
         - !secret hunter_pushbullet
     service: notify.pushbullet
+- id: '1566268081786'
+  alias: Set Initial Winter Tariffs
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition:
+  - condition: state
+    entity_id: sensor.season
+    state: winter
+  action:
+  - data:
+      entity_id: automation.Weekday_Peak_NonWinter_Tariff_Set
+    service: automation.turn_off
+  - data:
+      entity_id: automation.Weekday_Shoulder_NonWinter_Tariff_Set
+    service: automation.turn_off
+  - data:
+      entity_id: automation.Weekday_Shoulder_Winter_Tariff_Set
+    service: automation.turn_on
+  - data:
+      entity_id: automation.Weekday_Peak_Winter_Tariff_Set
+    service: automation.turn_on
+- id: '1566268132543'
+  alias: Set Initial Non Winter Tariffs
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition:
+  - condition: template
+    value_template: '{{  states("sensor.season") != "winter" }}'
+  action:
+  - data:
+      entity_id: automation.Weekday_Peak_NonWinter_Tariff_Set
+    service: automation.turn_on
+  - data:
+      entity_id: automation.Weekday_Shoulder_NonWinter_Tariff_Set
+    service: automation.turn_on
+  - data:
+      entity_id: automation.Weekday_Shoulder_Winter_Tariff_Set
+    service: automation.turn_off
+  - data:
+      entity_id: automation.Weekday_Peak_Winter_Tariff_Set
+    service: automation.turn_off
+- id: '1566291977922'
+  alias: Pre-alarm
+  trigger:
+  - platform: template
+    value_template: "{{(as_timestamp(strptime(states('sensor.time'), '%H:%M')) - states.input_datetime.weekday_wakeup_time.attributes.timestamp)| int | timestamp_custom('%H:%M') == '00:15'}}"
+  condition:
+  - condition: state
+    entity_id: person.hunter
+    state: home
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'on'
+  action:
+  - data:
+      entity_id: switch.silvia
+    service: homeassistant.turn_on

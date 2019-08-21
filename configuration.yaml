@@ -56,14 +56,14 @@ google_assistant:
 googlehome:
   devices:
     - host: 10.0.0.16
-      track_alarms: true
+      track_alarms: false
       track_devices: false
       #device_types: 1
     - host: 10.0.0.12
-      track_alarms: true
+      track_alarms: false
       track_devices: false
     - host: 10.0.0.13
-      track_alarms: true
+      track_alarms: false
       track_devices: false
 
 cast:
@@ -82,6 +82,8 @@ camera:
     username: !secret camera_username
     password: !secret camera_password
     name: Entry Cam
+  - platform: bom
+    location: Sydney
   - platform: generic
     still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/f3_windybanks.jpg
     name: M1 Windybanks
@@ -128,6 +130,9 @@ discovery:
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
+
+recorder:
+  db_url: !secret db_url
 
 # Enables support for tracking state changes over time.
 history:
@@ -389,7 +394,7 @@ timer:
 
 utility_meter:
   energy:
-    source: sensor.power_meter
+    source: sensor.power_meter_kwh
     cycle: daily
     tariffs:
       - offpeak

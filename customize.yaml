@@ -93,3 +93,16 @@ sensor.daily_total_kw:
   icon: mdi:counter
 sensor.power_meter:
   friendly_name: Power Meter
+  icon: mdi:guage
+sensor.power_meter_kwh:
+  friendly_name: Power (kWh)
+  icon: mdi:guage
+sensor.yesterdays_power:
+  friendly_name: Yesterday
+  icon: mdi:counter
+sensor.two_days_ago_power:
+  friendly_name: Two Days Ago
+  icon: mdi:counter
+sensor.db_size:
+  name: Database Size
+  icon: mdi:database

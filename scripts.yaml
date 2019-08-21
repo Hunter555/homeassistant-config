@@ -14,10 +14,19 @@ delayed_alarm:
       entity_id: light.bedroom
       transition: 220
     service: light.turn_on
+  - data:
+      entity_id: media_player.googlehome0402
+      media_content_id: https://abcradiolivehls-lh.akamaihd.net/i/triplejnsw_1@327300/master.m3u8
+      media_content_type: music
+    service: media_player.play_media
 delayed_doorbell:
   alias: Delayed Doorbell
   sequence:
   - delay: '15'
+  - data:
+      entity_id: media_player.all_speakers
+      volume_level: 0.3
+    service: media_player.volume_set
   - data:
       entity_id: media_player.all_speakers
     service: media_player.turn_off

@@ -90,6 +90,18 @@
     value_template: "{{ value_json.power|float }}"
     unit_of_measurement: 'kW'
     icon: mdi:power-plug
+#  - platform: mqtt
+#    name: watt_hours
+#    state_topic: "home/powermon/status"
+#    value_template: "{{ value_json.watt_hour|float }}"
+#    unit_of_measurement: 'WH'
+#    icon: mdi:power-plug
+
+  - platform: integration
+    source: sensor.power_meter
+    name: power_meter_kwh
+    unit: 'kWH'
+    round: 3
 
   - platform: statistics
     name: 'Power per minute'
@@ -160,10 +172,10 @@
         friendly_name: Daily Total
         value_template: "{{(states('sensor.energy_peak')|float + states('sensor.energy_offpeak')|float + states('sensor.energy_shoulder')|float) |round(2)}}"
         unit_of_measurement: kWH
-      realtime_power:
-        friendly_name: Realtime Power
-        value_template: "{{(state_attr('sensor.power_per_minute_mean', 'total') / 60)|round(2)}}"
-        unit_of_measurement: kwH 
+#      realtime_power:
+#        friendly_name: Realtime Power
+#        value_template: "{{((states('sensor.watt_hours')|float) / 1000) }}"
+#        unit_of_measurement: kWH
       daily_peak_cost:
         friendly_name: Peak
         value_template: "{{(states('sensor.energy_peak')|float*(states('input_number.peak_tariff_rate')|float / 100))|round(2)}}"
@@ -182,20 +194,27 @@
         unit_of_measurement: $
       daily_total_cost:
         friendly_name: Daily Total
-        value_template: "{{states('sensor.daily_peak_cost')|float + states('sensor.daily_offpeak_cost')|float + states('sensor.daily_shoulder_cost')|float + states('sensor.daily_supply_cost')|float}}"
+        value_template: "{{(states('sensor.daily_peak_cost')|float + states('sensor.daily_offpeak_cost')|float + states('sensor.daily_shoulder_cost')|float + states('sensor.daily_supply_cost')|float)|round(2)}}"
         unit_of_measurement: $
       is_winter_tariff:
         friendly_name: Winter Tariffs
         value_template: "{{states('sensor.season') == 'winter'}}"
 
-  - platform: history_stats
-    name: Yesterdays Power
-    entity_id: sensor.daily_total_kw
-    state: 'on'
-    type: count   
-    end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
-    duration:
-      hours: 24
+  - platform: sql
+    db_url: !secret db_url
+    queries:
+      - name: Yesterdays Power
+        query: "SELECT * FROM states WHERE entity_id='sensor.daily_total_kw' AND created < CURDATE() ORDER BY state_id DESC LIMIT 1;"
+        column: 'state'
+        unit_of_measurement: kWH
+      - name: Two Days Ago Power
+        query: "SELECT * FROM states WHERE entity_id='sensor.daily_total_kw' AND created < SUBDATE(CURDATE(),1) ORDER BY state_id DESC LIMIT 1;"
+        column: 'state'
+        unit_of_measurement: kWH
+      - name: DB size
+        query: 'SELECT table_schema "database", Round(Sum(data_length + index_length) / 1024 / 1024, 1) "value" FROM information_schema.tables WHERE table_schema="homeassistant" GROUP BY table_schema;'
+        column: 'value'
+        unit_of_measurement: MB
 
   - platform: template
     sensors:
