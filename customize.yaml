@@ -106,3 +106,9 @@ sensor.two_days_ago_power:
 sensor.db_size:
   name: Database Size
   icon: mdi:database
+sensor.downstairs_temperature:
+  friendly_name: Downstairs Temperature
+sensor.shelly_beach_next_low:
+  icon: mdi:wave
+sensor.shelly_beach_next_high:
+  icon: mdi:waves

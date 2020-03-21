@@ -20,14 +20,26 @@ weather:
 
 # Enables the frontend
 frontend:
+  themes: !include_dir_merge_named themes/
 # Enables configuration UI
 config:
+
+mobile_app:
 
 logger:
   default: warning
 
 lovelace:
   mode: yaml
+  resources:
+    - url: /hacsfiles/bar-card/bar-card.js
+      type: module
+    - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+      type: module
+    - url: /hacsfiles/decluttering-card/decluttering-card.js
+      type: module
+
+shopping_list:
 
 wake_on_lan:
 
@@ -35,10 +47,17 @@ system_health:
 
 google_assistant:
   project_id: level-mark-166706
-  api_key: !secret google_api_key
+  service_account: !include service_account.json
+  report_state: true
+  #api_key: !secret google_api_key
   exposed_domains:
+    - switch
     - light
     - cover
+    - input_boolean
+    - fan
+    - sensor
+    - camera
   entity_config:
     switch.Silvia:
       expose: true
@@ -53,18 +72,18 @@ google_assistant:
     media_player.tunes:
       expose: true
 
-googlehome:
-  devices:
-    - host: 10.0.0.16
-      track_alarms: false
-      track_devices: false
-      #device_types: 1
-    - host: 10.0.0.12
-      track_alarms: false
-      track_devices: false
-    - host: 10.0.0.13
-      track_alarms: false
-      track_devices: false
+#googlehome:
+#  devices:
+#    - host: 10.0.0.16
+#      track_alarms: false
+#      track_devices: false
+#      #device_types: 1
+#    - host: 10.0.0.12
+#      track_alarms: false
+#      track_devices: false
+#    - host: 10.0.0.13
+#      track_alarms: false
+#      track_devices: false
 
 cast:
 
@@ -72,6 +91,12 @@ map:
 
 geo_location:
   - platform: nsw_rural_fire_service_feed
+    entity_namespace: 'nsw_fire_service_feed'
+    radius: 20
+    categories:
+      - 'Emergency Warning'
+      - 'Watch and Act'
+      - 'Advice'
 
 stream:
 
@@ -85,23 +110,27 @@ camera:
   - platform: bom
     location: Sydney
   - platform: generic
-    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/f3_windybanks.jpg
-    name: M1 Windybanks
-  - platform: generic
-    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/f3_wahroonga.jpg
-    name: M1 Wahroonga
-  - platform: generic
-    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/pacific_chats.jpg
-    name: Chatswood
-  - platform: generic
-    still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/pennanthillsrd_thornleigh.jpg
-    name: Thornleigh
+    name: Garage Cam
+    still_image_url: !secret garage_cam_image
+    stream_source: !secret garage_cam_stream_lq
+    username: !secret camera_username
+    password: !secret camera_password
+  # - platform: generic
+  #   still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/f3_windybanks.jpg
+  #   name: M1 Windybanks
+  # - platform: generic
+  #   still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/f3_wahroonga.jpg
+  #   name: M1 Wahroonga
+  # - platform: generic
+  #   still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/pacific_chats.jpg
+  #   name: Chatswood
+  # - platform: generic
+  #   still_image_url: http://www.rms.nsw.gov.au/trafficreports/cameras/camera_images/pennanthillsrd_thornleigh.jpg
+  #   name: Thornleigh
 
 
 
 http:
-  # Uncomment this to add a password (recommended!)
-  #api_password: !secret http_password
   #trusted_networks:
   # Uncomment this if you are using SSL or running in Docker etc
   base_url: !secret base_url
@@ -288,7 +317,7 @@ switch:
     #disable_brightness_adjust: True
   - platform: wake_on_lan
     name: My PC
-    mac_address: "AC:22:0B:26:15:08"
+    mac: "B4:2E:99:3E:C5:5D"
     host: 10.0.0.2
     turn_off:
       service: switch.turn_off
@@ -298,28 +327,27 @@ switch:
       pc:
         command_off: !secret pc_shutdown_command
 
+webostv:
+  host: 10.0.0.21
+  name: Living Room TV
+  turn_on_action:
+    service: wake_on_lan.send_magic_packet
+    data:
+      mac: "2C:2B:F9:32:D6:2E"
+  customize:
+    sources:
+      - livetv
+      - steamlink
+      - chromecast
+      - youtube
+      - foxtel
+      - netflix
+      - amazon
 
 media_player:
   - platform: gpmdp
     name: Tunes
     host: 10.0.0.2
-  - platform: webostv
-    host: 10.0.0.21
-    name: Living Room TV
-    timeout: 5
-    turn_on_action:
-      service: wake_on_lan.send_magic_packet
-      data:
-        mac: "2C:2B:F9:32:D6:2E"
-    customize:
-      sources:
-        - livetv
-        - steamlink
-        - chromecast
-        - youtube
-        - foxtel
-        - netflix
-        - amazon
 
 notify:
   - name: Pushbullet
@@ -450,6 +478,8 @@ binary_sensor:
     country: AU
     province: NSW
 
+
+
 plant:
     basil:
       sensors:
@@ -458,3 +488,6 @@ plant:
         conductivity: sensor.basil_conductivity
         brightness: sensor.basil_light_intensity
       min_moisture: 30
+
+openuv:
+  api_key: !secret openuv_api_key

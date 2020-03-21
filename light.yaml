@@ -6,6 +6,9 @@
       port: 8899
       groups:
       - number: 1
+        type: rgbw
+        name: Bedroom
+      - number: 1
         type: white
         name: Entry
       - number: 2
@@ -17,13 +20,10 @@
       - number: 4
         type: white
         name: Stairs
-    - host: 10.0.0.160
-      version: 5
-      port: 8899
+    - host: 10.0.0.25
+      version: 6
+#      port: 8899
       groups:
-      - number: 1
-        type: white
-        name: Bedroom
       - number: 1
         type: rgbw
         name: Dining Table
@@ -39,9 +39,9 @@
       - number: 4
         type: rgbw
         name: Deck
-    - host: 10.0.0.25
-      version: 6
-      groups:
+#    - host: 10.0.0.25
+#      version: 6
+#      groups:
 
   #- platform: mqtt_template
    # name: "Spheramid Underlight"

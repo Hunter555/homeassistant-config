@@ -1,5 +1,4 @@
 default_view:
-    view: yes
     name: Home
     icon: mdi:home
     entities:
@@ -18,16 +17,13 @@ default_view:
       - group.Leak_sensors
 
 Lights_view:
-    view: yes
     name: Lights
     icon: mdi:lightbulb
     entities:
       - group.lights
       - group.Scenes
-      - switch.flux
 
 Automation_view:
-    view: yes
     name: Automation
     icon: mdi:robot
     entities:
@@ -108,7 +104,6 @@ Speedtest:
   - sensor.speedtest_ping
 
 Transport:
-  view: yes
   icon: mdi:car
   entities:
     - group.transport_cameras

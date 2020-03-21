@@ -7,7 +7,7 @@ resources:
     type: css
 
 # Optional background for all views. Check https://developer.mozilla.org/en-US/docs/Web/CSS/background for more examples.
-background: center / cover no-repeat url("/background.png") fixed
+#background: lightgrey
 # Exclude entities from "Unused entities" view
 excluded_entities:
   - weblink.router
@@ -17,7 +17,7 @@ views:
     # Unique id for direct access /lovelace/${id} and editing it from the UI.
     id: home
     # Optional background (overwrites the global background).
-    background: radial-gradient(darkgrey, black)
+    #background: radial-gradient(darkgrey, black)
     # Each view can have a different theme applied. Theme should be defined in the frontend.
     theme: dark-mode
     # The cards to show on this view.
@@ -103,24 +103,30 @@ views:
           - binary_sensor.0x00158d0001f38110_contact
           - light.entry
         camera_image: camera.entry_cam
-      #- type: picture-glance
-      #  id: bathroom
-      #  title: Bathroom
-      #  image: /local/images/bathroom.jpg
-      #  entities:
-      #    - sensor.shower_on
-      #    - binary_sensor.bathroom_door
-      #    - sensor.0x00158d000210aa65_humidity
-      #    - switch.0x00158d00020f3b00_switch
-      - type: picture-entity
+      - type: picture-glance
         id: garage
         title: Garage
-        state_image:
-          "closed": /local/images/garage_closed.jpg
-          "open": /local/images/garage_open.jpg
-        entity: cover.garage_door
-        tap_action: 
-          action: more-info
+        entities:
+          - cover.garage_door
+        camera_image: camera.garage_cam
+      # - type: picture-glance
+      #   id: bathroom
+      #   title: Bathroom
+      #   image: /local/images/bathroom.jpg
+      #   entities:
+      #    - sensor.shower_on
+      #    - binary_sensor.bathroom_door
+      #    - sensor.bathroom_temperature_humidity
+      #    - switch.0x00158d00020f3b00_switch
+      # - type: picture-entity
+      #   id: garage
+      #   title: Garage
+      #   state_image:
+      #     "closed": /local/images/garage_closed.jpg
+      #     "open": /local/images/garage_open.jpg
+      #   entity: cover.garage_door
+      #   tap_action: 
+      #     action: more-info
       - type: picture-entity
         id: silvia
         title: Coffee machine
@@ -145,6 +151,9 @@ views:
       #    action: toggle
       #  image: /local/images/bedroom.jpg
       #  entity: light.bedroom
+
+      - type: shopping-list
+        title: Shopping List
 
   - icon: mdi:floor-plan
     id: floorplan_page
@@ -179,6 +188,13 @@ views:
             - type: state-icon
               tap_action:
                 action: toggle
+              entity: media_player.googlehome0402
+              style:
+                top: 59%
+                left: 37%
+            - type: state-icon
+              tap_action:
+                action: toggle
               entity: switch.0x00158d00020f3b00_switch # bathroom fan
               style:
                 top: 88%
@@ -208,6 +224,11 @@ views:
                 top: 38%
                 left: 50%
             - type: state-icon
+              entity: binary_sensor.downstairs_door
+              style:
+                top: 27%
+                left: 50%
+            - type: state-icon
               tap_action:
                 action: toggle
               entity: light.pantry
@@ -233,6 +254,11 @@ views:
               style:
                 top: 25%
                 left: 75%
+            - type: state-icon
+              entity: binary_sensor.balcony_door
+              style:
+                top: 34%
+                left: 81%
             - type: state-icon
               tap_action:
                 action: toggle
@@ -297,24 +323,12 @@ views:
         id: speedtest
         title: Speedtest
         cards:
-          - type: gauge
-            id: speedtest_speed
-            title: Download
+          - type: custom:bar-card
             entity: sensor.speedtest_download
-            max: 95
-            severity:
-              green: 75
-              yellow: 50
-              red: 0
-          - type: gauge
-            id: speedtest_upload
-            title: Upload
+            max: 100
+          - type: custom:bar-card
             entity: sensor.speedtest_upload
-            max: 38
-            severity:
-              green: 20
-              yellow: 10
-              red: 0
+            max: 40
           - type: sensor
             id: speedtest_ping
             title: Ping
@@ -327,49 +341,49 @@ views:
           - sensor.local_bus
           - sensor.platform_1
           - sensor.platform_2
-      - type: vertical-stack
-        id: fuel_stack
-        title: 98 Octane Price
-        cards:
-          - type: sensor
-            id: 7elevenP98
-            entity: sensor.7_eleven_berowra_p98
-            graph: line
-          - type: sensor
-            entity: sensor.bp_berowra_p98
-            graph: line
-          - type: sensor
-            entity: sensor.bp_normanhurst_p98
-            graph: line
-      - type: gauge
-        id: mold_gauge
-        title: Mold Risk
-        entity: sensor.mold_indicator_study
-        severity:
-          green: 0
-          yellow: 70
-          red: 75
-      - type: gauge
-        id: mold_bathroom_gauge
-        entity: sensor.mold_indicator_bathroom
-        severity:
-          green: 0
-          yellow: 70
-          red: 75
+
+      - type: custom:mini-graph-card
+        icon: mdi:water
+        entities:
+          - entity: sensor.study_mold_risk
+            name: Study
+          - entity: sensor.bathroom_mold_risk
+            name: Bathroom
+        name: Mold Risk
+        hours_to_show: 10
+        points_per_hour: 4
+        smoothing: true
+        show:
+          fill: false
+          extrema: false
+          labels: true
+        color_thresholds:
+          - value: 90
+            color: "#eb392d"
+          - value: 55
+            color: "#6df54e"
+          - value: 75
+            color: "#ebcb2d"
+
+
       - type: glance
         title: Temperature Sensors
         id: all_temp_sensors
         entities:
           - sensor.0x00158d0001e7b92f_temperature
-          - sensor.0x00158d000210aa65_temperature
+          - sensor.bathroom_temperature_temperature
           - sensor.0x00158d0001e87d1f_temperature
+          - sensor.downstairs_temperature
+          - sensor.bedroom_temperature
       - type: glance
         title: Humidity Sensors
         id: all_humidity_sensors
         entities:
           - sensor.0x00158d0001e7b92f_humidity
-          - sensor.0x00158d000210aa65_humidity
+          - sensor.bathroom_temperature_humidity
           - sensor.0x00158d0001e87d1f_humidity
+          - sensor.downstairs_humidity
+          - sensor.bedroom_humidity
       - type: glance
         title: Leak Sensors
         id: all_leak_sensors
@@ -384,6 +398,8 @@ views:
           - binary_sensor.pantry_door
           - binary_sensor.0x00158d0001f38110_contact
           - binary_sensor.bathroom_door
+          - binary_sensor.balcony_door
+          - binary_sensor.downstairs_door
       - type: glance
         id: other_sensors
         title: Other Sensors
@@ -394,6 +410,53 @@ views:
           - sensor.garage_door_wifi_signal_strength
           - sensor.shower_on
           - sensor.doorbell
+          - sensor.bathroom_temperature_pressure
+
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: BP Normanhurst
+                entities: 
+                    - sensor.bp_normanhurst_p98            
+                show:
+                  graph: false
+                  icon: false
+                  fill: false
+              - type: custom:mini-graph-card
+                name: BP Berowra
+                entities: 
+                    - sensor.bp_berowra_p98            
+                show:
+                  graph: false
+                  icon: false
+                  fill: false
+              - type: custom:mini-graph-card
+                name: 7 Eleven
+                entities: 
+                    - sensor.7_eleven_berowra_p98            
+                show:
+                  graph: false
+                  icon: false
+                  fill: false
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                icon: mdi:gas-station
+                entities:
+                  - entity: sensor.7_eleven_berowra_p98
+                    name: 7 Eleven
+                  - entity: sensor.bp_berowra_p98
+                    name: BP Berowra
+                  - entity: sensor.bp_normanhurst_p98
+                    name: BP Normanhurst
+                name: 98 Octane Price
+                hours_to_show: 24
+                show:
+                  fill: false
+                  extrema: false
+
       - type: glance
         id: hass_info
         title: Home Assistant
@@ -412,11 +475,15 @@ views:
           - sensor.0x00158d0001e87d1f_battery
           - sensor.0x00158d0001f38110_battery
           - sensor.0x00158d0001f40663_battery
-          - sensor.0x00158d000210aa65_battery
+          - sensor.bathroom_temperature_battery
           - sensor.0x00158d0002115f31_battery
           - sensor.0x00158d0002337473_battery
           - sensor.0x00158d000233865a_battery
           - sensor.doorbell_battery
+          - sensor.downstairs_temperature_battery
+          - sensor.bedroom_temperature_battery
+          - sensor.balcony_door_battery
+          - sensor.downstairs_door_battery
     # Specify a tab icon if you want the view tab to be an icon.
   - icon: mdi:power-socket-au
     id: power_page
@@ -428,6 +495,18 @@ views:
       - type: sensor
         entity: sensor.power_meter
         graph: line
+      - type: custom:mini-graph-card
+        entities:
+          - entity: sensor.daily_total_kw
+        name: Energy consumption
+        hours_to_show: 168
+        aggregate_func: max
+        group_by: date
+        show:
+          graph: bar
+          average: true
+          labels: true
+          labels_secondary: true
       - type: glance
         id: power_tariffs_glance
         title: Todays Usage
@@ -447,12 +526,6 @@ views:
           - sensor.daily_supply_cost
           - sensor.daily_total_cost
       - type: glance
-        id: power_history
-        title: History
-        entities:
-          - sensor.yesterdays_power
-          - sensor.two_days_ago_power
-      - type: glance
         id: power_tariffs_rates
         title: Current Tariffs
         entities:
@@ -462,14 +535,7 @@ views:
       - type: glance
         id: power_control_glance
         entities:
-          - sensor.power_per_minute_mean
           - sensor.is_winter_tariff
-      - type: sensor
-        name: Daily Historic Totals
-        id: history_power
-        hours_to_show: 80
-        graph: line
-        entity: sensor.yesterdays_power
       # Weekend Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 21:59
       # Weekday Winter Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 16:59 | Peak 17:00 - 20:59 | Shoulder 21:00 - 22:00
       # Weekday Non-Winteer Tariffs: Offpeak 22:00 - 6:59 | Shoulder 7:00 - 13:59 | Peak 14:00 - 19:59 | Shoulder 20:00 - 22:00
@@ -577,17 +643,10 @@ views:
         entity: sensor.aquarium_water_level
         graph: line
         detail: 1
-  - title: Automations
+  - icon: mdi:robot
     id: automations_page
     # Title of the view. Will be used as the tooltip for tab icon
     cards:
-      - type: glance
-        id: google_home_timers
-        title: Google Timers/Alarms
-        entities:
-          - sensor.display_timer_local
-          - sensor.display_timer_remaining
-          - sensor.display_alarm
       - type: glance
         id: zigbee
         title: Zigbee
@@ -602,7 +661,6 @@ views:
         # The entities here will be shown in the same order as specified.
         # Each entry is an entity ID or a map with extra options.
         entities:
-          - group.all_automations
           - automation.turn_off_things_i_left_on
           - automation.certificate_expiry_warning
           - automation.coffee_weekday_warmup
@@ -640,12 +698,81 @@ views:
           - automation.weekday_peak_winter_tariff_set
           - automation.weekday_shoulder_nonwinter_tariff_set
           - automation.weekday_shoulder_winter_tariff_set
-  - icon: mdi:leaf
-    id: plants_page
+  - icon: mdi:diving-scuba-flag
+    id: diving-info
     cards:
-      - type: plant-status
-        name: Basil
-        entity: plant.basil
+      - type: glance
+        title: Tides
+        entities:
+          - sensor.shelly_beach_next_high
+          - sensor.shelly_beach_next_low
+      - type: glance
+        title: UV
+        entities:
+          - binary_sensor.protection_window
+          - sensor.current_ozone_level
+          - sensor.current_uv_index
+          - sensor.current_uv_level
+          - sensor.max_uv_index
+      - type: glance
+        title: UV Exposure Times
+        entities:
+          - sensor.skin_type_1_safe_exposure_time
+          #- sensor.skin_type_2_safe_exposure_time
+          #- sensor.skin_type_3_safe_exposure_time
+          - sensor.skin_type_4_safe_exposure_time
+          #- sensor.skin_type_5_safe_exposure_time
+          #- sensor.skin_type_6_safe_exposure_time
+      - type: weather-forecast
+        title: Forecast
+        id: weather
+        entity: weather.dark_sky
+      - type: entities
+        id: weathercustom
+        show_header_toggle: false
+        entities:
+          - sensor.weather_precip_probability
+          - sensor.bom_feels_like_c
+          - sensor.bom_air_temp_c
+          - sensor.0x00158d0001e87d1f_temperature
+          - sensor.0x00158d0001e87d1f_humidity
+          - sensor.season
+        card:
+          type: glance
+        title: Current Conditions
+      - type: picture-glance
+        id: bom-radar
+        title: Radar
+        entities:
+          - sensor.weather_precip_probability
+        camera_image: camera.bom_radar_loop_sydney
+      - type: iframe
+        url: https://www.coastalwatch.com/surf-cams-surf-reports/nsw/manly---fairy-bower
+  - icon: mdi:biohazard
+    id: Coronavirus
+    cards:
+      - type: glance
+        title: COVID-19 Australia
+        entities:
+          - sensor.australia_coronavirus_recovered
+          - sensor.australia_coronavirus_deaths
+          - sensor.australia_coronavirus_current
+          - sensor.australia_coronavirus_confirmed
+      - type: glance
+        title: COVID-19 Worldwide
+        entities:
+          - sensor.worldwide_coronavirus_recovered
+          - sensor.worldwide_coronavirus_deaths
+          - sensor.worldwide_coronavirus_current
+          - sensor.worldwide_coronavirus_confirmed
+
+
+  # - icon: mdi:leaf
+  #   id: plants_page
+  #   cards:
+  #     - type: plant-status
+  #       name: Basil
+  #       entity: plant.basil
   - icon: mdi:cast
     id: media_page
     cards:

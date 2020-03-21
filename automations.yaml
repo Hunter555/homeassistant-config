@@ -1,6 +1,5 @@
 - id: 31c41e08480f4761ba1d84bc379b5df9
   alias: Coffee weekday warmup
-  hide_entity: false
   trigger:
     platform: time
     at: 06:45:00
@@ -23,7 +22,6 @@
     - switch.Silvia
 - id: aa91ac10b76049d7b8c36c20a3ad03c3
   alias: Notify of Rain
-  hide_entity: false
   trigger:
     platform: time
     at: 06:55:00
@@ -46,7 +44,6 @@
       message: Rain is expected today
 - id: 74fc02fd98a345c7bcd41cddf1d320cd
   alias: Certificate Expiry Warning
-  hide_entity: true
   trigger:
     platform: state
     entity_id: sensor.ssl_certificate_expiry
@@ -76,10 +73,8 @@
     - light.Hallway
     - light.Stairs
     service: homeassistant.turn_off
-  hide_entity: false
 - id: fecafe1ec73542aab9b1ef636facefc5
   alias: Left Music On
-  hide_entity: false
   trigger:
     platform: state
     entity_id: group.Family
@@ -94,7 +89,6 @@
     entity_id: media_player.tunes
 - id: d823f6cba3b54bf1848db1a2e9820d00
   alias: Dim the lights when we watch Plex
-  hide_entity: false
   trigger:
   - platform: state
     entity_id: sensor.Plex
@@ -244,7 +238,6 @@
   action:
   - data:
       entity_id:
-      - light.gateway_light_7811dcb20b46
       - light.pantry
     service: light.turn_off
 - id: '1525094445197'
@@ -555,7 +548,6 @@
     service: notify.pushbullet
 - id: '1558516249730'
   alias: Enable Zigbee joining
-  hide_entity: true
   trigger:
   - entity_id: input_boolean.zigbee_permit_join
     platform: state
@@ -571,7 +563,6 @@
       entity_id: timer.zigbee_permit_join
 - id: disable_zigbee_join
   alias: Disable Zigbee joining
-  hide_entity: true
   trigger:
   - entity_id: input_boolean.zigbee_permit_join
     platform: state
@@ -586,7 +577,6 @@
     service: timer.cancel
 - id: disable_zigbee_join_timer
   alias: Disable Zigbee joining by timer
-  hide_entity: true
   trigger:
   - platform: event
     event_type: timer.finished
@@ -665,22 +655,16 @@
       entity_id: media_player.living_room_tv
     service: media_player.media_pause
 - id: '1562639972083'
-  alias: Aquarium Alerts
+  alias: Aquarium Alerts - Low Temp
   trigger:
-  - above: '28'
-    below: '22'
+  - below: '24'
     entity_id: sensor.aquarium_temperature
-    for: 0:05:00
-    platform: numeric_state
-  - above: '110'
-    below: '85'
-    entity_id: sensor.aquarium_water_level
     for: 0:05:00
     platform: numeric_state
   condition: []
   action:
   - data:
-      message: Check on the aquarium
+      message: Low temperature detected in reef
       target:
         - !secret hunter_pushbullet
     service: notify.pushbullet
@@ -731,7 +715,9 @@
   alias: Pre-alarm
   trigger:
   - platform: template
-    value_template: "{{(as_timestamp(strptime(states('sensor.time'), '%H:%M')) - states.input_datetime.weekday_wakeup_time.attributes.timestamp)| int | timestamp_custom('%H:%M') == '00:15'}}"
+    value_template: '{{(as_timestamp(strptime(states(''sensor.time''), ''%H:%M''))
+      - states.input_datetime.weekday_wakeup_time.attributes.timestamp)| int | timestamp_custom(''%H:%M'')
+      == ''00:15''}}'
   condition:
   - condition: state
     entity_id: person.hunter
@@ -743,3 +729,13 @@
   - data:
       entity_id: switch.silvia
     service: homeassistant.turn_on
+- id: '1584578603078'
+  alias: Update OpenUV every hour
+  description: 24 of 50 calls per day
+  trigger:
+  - minutes: '59'
+    platform: time_pattern
+  condition: []
+  action:
+  - data: {}
+    service: openuv.update_data
